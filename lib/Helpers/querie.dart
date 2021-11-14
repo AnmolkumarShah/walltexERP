@@ -3,9 +3,12 @@
 import 'dart:convert';
 import 'package:walltex_app/Helpers/network.dart';
 import 'package:walltex_app/Helpers/url_model.dart';
+import 'package:walltex_app/Services/Model_Interface.dart';
 
 class Query {
   static const allUserMaster = "select * from  usr_mast";
+  static const allReferences = "select * from refferance";
+  static const allProduct = "select * from product";
 
   // method for all  query language commands
   static Future execute({String? query, String? p1 = '0'}) async {
@@ -14,6 +17,7 @@ class Query {
       p1: p1!,
     );
     try {
+      print(query);
       final url = urlObject.getUrl();
       var result = await Network.get(url);
       dynamic data;
@@ -24,6 +28,22 @@ class Query {
       }
       return data;
     } catch (e) {
+      return [];
+    }
+  }
+
+  static Future fetch(Model m) async {
+    final UrlGlobal urlObject = UrlGlobal(
+      p2: m.getQuery(),
+    );
+    try {
+      final url = urlObject.getUrl();
+      var result = await Network.get(url);
+      final data = json.decode(result.body) as List<dynamic>;
+      result = m.format(data);
+      return result;
+    } catch (e) {
+      print(e.toString());
       return [];
     }
   }

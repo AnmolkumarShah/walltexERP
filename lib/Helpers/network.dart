@@ -12,7 +12,7 @@ class Network {
       return result;
     } catch (e) {
       print("Error From get method helper function");
-      print(e);
+      rethrow;
     }
   }
 }

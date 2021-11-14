@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
+import 'package:walltex_app/Providers/control_provider.dart';
+import 'package:walltex_app/Screens/dashboard_screen.dart';
 import 'package:walltex_app/Services/user_class.dart';
 
 // ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -19,10 +22,29 @@ class _LoginScreenState extends State<LoginScreen> {
   handleLogin() async {
     if (username.value().isNotEmpty && password.value().isNotEmpty) {
       var res = await User.login(
-          username: username.value(), password: password.value());
+        username: username.value(),
+        password: password.value(),
+      );
+
       if (res['value'] == true) {
-        print(res);
-        showSnakeBar(context, res['msg']);
+        User user = res['data'];
+
+        if (user.isBlocked() == false) {
+          Provider.of<ControlProvider>(context, listen: false)
+              .setUser(user: user);
+          showSnakeBar(context, res['msg']);
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const Dashboard(),
+            ),
+          );
+        } else if (user.isBlocked() == true) {
+          showSnakeBar(context, "You Are Been Blocked From Using This App");
+        }
+      } else {
+        showSnakeBar(context, "No User Found");
       }
     } else {
       showSnakeBar(context, "Please Fill All Fields");

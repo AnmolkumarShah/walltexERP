@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walltex_app/Helpers/field_cover.dart';
 
 class TextFormHelper extends StatelessWidget {
   const TextFormHelper({
@@ -6,17 +7,20 @@ class TextFormHelper extends StatelessWidget {
     this.label,
     this.obscure,
     this.controller,
+    this.type,
   }) : super(key: key);
 
   final String? label;
   final TextEditingController? controller;
   final bool? obscure;
+  final TextInputType? type;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       obscureText: obscure!,
+      keyboardType: type,
       decoration: InputDecoration(
         label: Text(label!),
       ),
@@ -44,15 +48,36 @@ class Input {
     _obscure = true;
   }
 
+  Input.number({String? label = "Placeholder"}) {
+    _controller = TextEditingController(text: "");
+    _label = label;
+    _inputType = TextInputType.number;
+    _obscure = false;
+  }
+
+  Input.email({String? label = "Placeholder"}) {
+    _controller = TextEditingController(text: "");
+    _label = label;
+    _inputType = TextInputType.emailAddress;
+    _obscure = false;
+  }
+
   Widget builder() {
-    return TextFormHelper(
-      label: _label,
-      controller: _controller,
-      obscure: _obscure,
+    return fieldcover(
+      child: TextFormHelper(
+        label: _label,
+        controller: _controller,
+        obscure: _obscure,
+        type: _inputType,
+      ),
     );
   }
 
   String value() {
     return _controller!.value.text.trim();
+  }
+
+  bool isEmpty() {
+    return _controller!.value.text.trim().isEmpty ? true : false;
   }
 }
