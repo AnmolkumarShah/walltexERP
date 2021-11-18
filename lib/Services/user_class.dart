@@ -33,8 +33,24 @@ class User {
     return _id!;
   }
 
+  String show() {
+    return _name!;
+  }
+
   bool isBlocked() {
     return _isBlock!;
+  }
+
+  bool isAdmin() {
+    return _isAdmin!;
+  }
+
+  bool isEmpty() {
+    if (_id == -1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void setPass(String p) {

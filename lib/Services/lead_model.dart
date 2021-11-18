@@ -1,6 +1,7 @@
 import 'package:walltex_app/Helpers/querie.dart';
 
 class Lead {
+  int? sman;
   String? name;
   String? address;
   String? place;
@@ -23,6 +24,13 @@ class Lead {
   double? lat;
   double? log;
 
+  String? nextfollowupon;
+  String? nextfollowuprem;
+  int? ordergain;
+  int? orderlost;
+  String? gaindetails;
+  String? lostdetails;
+
   Lead({
     this.address,
     this.anniv,
@@ -43,7 +51,36 @@ class Lead {
     this.lat,
     this.log,
     this.leaddate,
+    this.sman,
+    this.gaindetails = "",
+    this.lostdetails = "",
+    this.nextfollowupon = "",
+    this.nextfollowuprem = "",
+    this.ordergain = 0,
+    this.orderlost = 0,
   });
+
+  Future getId(Lead lead) async {
+    try {
+      dynamic res = await Query.execute(query: """
+      select id from leads where Name = '${lead.name}' and address = '${lead.address}' and place = '${lead.place}'
+      """);
+      return res[0]['id'];
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  static Future getLead(int id) async {
+    try {
+      dynamic res = await Query.execute(query: """
+      select * from leads where id = $id
+      """);
+      return res[0];
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Future save() async {
     try {
@@ -53,16 +90,35 @@ class Lead {
 
         insert into leads(sman,Name,address,place,Mobile,email,dob,anniv,
         product1,product2,product3,product4,product5,product6,material,
-        remarks,leaddate,lat,long)
-        values(0,'$name','$address','$place','$mobile','$email','$dob','$anniv',
-        $prod1,$prod2,$prod3,$prod4,$prod5,$prod6,'$material','$remark','$leaddate',$lat,$log)
+        remarks,leaddate,lat,long,ref,nextfollowuprem,ordergain,gaindetails,orderlost,
+        lostdetails)
+        values($sman,'$name','$address','$place','$mobile','$email','$dob','$anniv',
+        $prod1,$prod2,$prod3,$prod4,$prod5,$prod6,'$material','$remark','$leaddate',
+        $lat,$log,$reffId,'$nextfollowuprem',$ordergain,'$gaindetails',$orderlost,'$lostdetails')
 
         """,
       );
 
-      print(res);
+      int leadId = await getId(this);
+
+      final followupres = await Query.execute(
+        p1: '1',
+        query: """
+
+        insert into followup(followupdt,leadid,sman,leadremarks,nextdate,nextrem,
+        isdone,isdoneid,lat,long)
+        values('$leaddate',$leadId,$sman,'$remark','$leaddate','',0,$sman,$lat,$log)
+
+        """,
+      );
+
+      if (res['status'] == 'success' && followupres['status'] == 'success') {
+        return {'value': true, 'msg': "Lead Saved Successfully"};
+      } else {
+        throw "Error In Lead saving";
+      }
     } catch (e) {
-      print(e);
+      return {'value': false, 'msg': e.toString()};
     }
   }
 }

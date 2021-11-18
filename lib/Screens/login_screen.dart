@@ -4,6 +4,7 @@ import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
 import 'package:walltex_app/Screens/dashboard_screen.dart';
+import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/user_class.dart';
 
 // ignore: must_be_immutable
@@ -19,7 +20,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Input password = Input.password(label: "Password");
 
+  bool loading = false;
+
   handleLogin() async {
+    setState(() {
+      loading = true;
+    });
     if (username.value().isNotEmpty && password.value().isNotEmpty) {
       var res = await User.login(
         username: username.value(),
@@ -49,6 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       showSnakeBar(context, "Please Fill All Fields");
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -81,10 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 username.builder(),
                 password.builder(),
-                ElevatedButton(
-                  onPressed: handleLogin,
-                  child: const Text("Login"),
-                )
+                loading == true
+                    ? Loader.circular
+                    : ElevatedButton(
+                        onPressed: handleLogin,
+                        child: const Text("Login"),
+                      )
               ],
             ),
           ),

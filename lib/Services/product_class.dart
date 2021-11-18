@@ -11,7 +11,7 @@ class Product implements Model {
   }
 
   @override
-  display() {
+  show() {
     return _desc;
   }
 
@@ -52,5 +52,10 @@ class Product implements Model {
       print(e);
       return false;
     }
+  }
+
+  @override
+  int getId() {
+    return _id!;
   }
 }

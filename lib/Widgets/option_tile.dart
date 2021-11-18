@@ -22,21 +22,24 @@ class OptionTile extends StatelessWidget {
         );
       },
       child: Card(
+        color: Theme.of(context).primaryColor,
         child: ListTile(
           title: Text(
-            this.title!,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+            title!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 20,
+              color: Colors.white,
             ),
           ),
         ),
         elevation: 8,
         shadowColor: Colors.green,
-        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
         shape: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.green, width: 1)),
+            borderSide: const BorderSide(color: Colors.green, width: 1)),
       ),
     );
   }

@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:async/async.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:walltex_app/Helpers/date_selected_helper.dart';
 import 'package:walltex_app/Helpers/drop_down_helper.dart';
 import 'package:walltex_app/Helpers/format_date.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
+import 'package:walltex_app/Providers/control_provider.dart';
+import 'package:walltex_app/Services/Model_Interface.dart';
 import 'package:walltex_app/Services/lead_model.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/product_class.dart';
 import 'package:walltex_app/Services/references_class.dart';
+import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/control.dart';
 
 class LeadEntryScreen extends StatefulWidget {
-  const LeadEntryScreen({Key? key}) : super(key: key);
+  int? madeLead;
+  LeadEntryScreen({Key? key, this.madeLead}) : super(key: key);
 
   @override
   State<LeadEntryScreen> createState() => _LeadEntryScreenState();
 }
 
 class _LeadEntryScreenState extends State<LeadEntryScreen> {
-  AsyncMemoizer? _memoizer;
   static int count = 0;
   List<Product>? productItems;
   List<References>? referencesItems;
   Product? _prod1, _prod2, _prod3, _prod4, _prod5, _prod6;
   References? _selectedReference;
+  List<User>? _users;
+  User? _selectedUser;
 
   bool? loading = false;
 
@@ -45,13 +50,17 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
   Future init() async {
     List<Product> pItems = await Query.fetch(Product());
     List<References> rItems = await Query.fetch(References());
+    List<User>? userList = await User.allUsers();
 
     pItems.insert(0, Product(id: -1, desc: "Select Product"));
     rItems.insert(0, References(id: -1, desc: "Select References"));
+    userList.insert(0, User(ids: -1, nm: "Select User"));
 
     setState(() {
       productItems = pItems;
       referencesItems = rItems;
+      _users = userList;
+
       _prod1 = pItems.first;
       _prod2 = pItems.first;
       _prod3 = pItems.first;
@@ -59,7 +68,11 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
       _prod5 = pItems.first;
       _prod6 = pItems.first;
       _selectedReference = rItems.first;
+      _selectedUser = userList.first;
     });
+    if (widget.madeLead != null) {
+      await getSet(widget.madeLead!);
+    }
     return;
   }
 
@@ -88,12 +101,13 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
         _anniv.isEmpty() ||
         _material.isEmpty() ||
         _remark.isEmpty() ||
-        _prod1!.isEmpty() ||
-        _prod2!.isEmpty() ||
-        _prod3!.isEmpty() ||
-        _prod4!.isEmpty() ||
-        _prod5!.isEmpty() ||
-        _prod6!.isEmpty() ||
+        (_prod1!.isEmpty() &&
+            _prod2!.isEmpty() &&
+            _prod3!.isEmpty() &&
+            _prod4!.isEmpty() &&
+            _prod5!.isEmpty() &&
+            _prod6!.isEmpty()) ||
+        _selectedUser!.isEmpty() ||
         _selectedReference!.isEmpty() ||
         _dob.isEmpty()) {
       return false;
@@ -102,9 +116,16 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     }
   }
 
-  save() async {
+  save(User _curUser) async {
     double? lat;
     double? lon;
+
+    // if user is not admin, then its own id will be saved into sman
+    if (!_curUser.isAdmin()) {
+      setState(() {
+        _selectedUser = _curUser;
+      });
+    }
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
@@ -116,6 +137,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     }
     if (check()) {
       Lead lead = Lead(
+        sman: _selectedUser!.getId(),
         address: _address.value(),
         anniv: formateDate(_anniv.value()),
         dob: formateDate(_dob.value()),
@@ -139,7 +161,13 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
       setState(() {
         loading = true;
       });
-      await lead.save();
+      dynamic res = await lead.save();
+      if (res['value'] == true) {
+        showSnakeBar(context, res['msg']);
+        Navigator.pop(context);
+      } else {
+        showSnakeBar(context, res['msg']);
+      }
       setState(() {
         loading = false;
       });
@@ -148,11 +176,40 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     }
   }
 
+  getSet(int id) async {
+    dynamic res = await Lead.getLead(id);
+    _name.setValue(res['Name']);
+    _address.setValue(res['address']);
+    _place.setValue(res['place']);
+    _mobile.setValue(res['Mobile']);
+    _email.setValue(res['email']);
+    _address.setValue(res['address']);
+    _remark.setValue(res['remarks']);
+    _material.setValue(res['material']);
+    _anniv.setValue(res['anniv']);
+    _dob.setValue(res['dob']);
+
+    _prod1 = productItems!.firstWhere((e) => e.getId() == res['product1']);
+    _prod2 = productItems!.firstWhere((e) => e.getId() == res['product2']);
+    _prod3 = productItems!.firstWhere((e) => e.getId() == res['product3']);
+    _prod4 = productItems!.firstWhere((e) => e.getId() == res['product4']);
+    _prod5 = productItems!.firstWhere((e) => e.getId() == res['product5']);
+    _prod6 = productItems!.firstWhere((e) => e.getId() == res['product6']);
+    _selectedReference =
+        referencesItems!.firstWhere((e) => e.getId() == res['ref']);
+    _selectedUser = _users!.firstWhere((e) => e.getId() == res['sman']);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    final User _currUser =
+        Provider.of<ControlProvider>(context, listen: false).getUser();
     return Scaffold(
       appBar: AppBar(
-        title: Text(Control.leadScreen['name'].toString()),
+        title: Text(widget.madeLead == null
+            ? Control.leadScreen['name'].toString()
+            : "Lead Details"),
       ),
       body: FutureBuilder(
         future: _fetchData(),
@@ -165,7 +222,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
             child: Column(
               children: [
                 _name.builder(),
-                Dropdown(
+                Dropdown<Model>(
                   selected: _selectedReference,
                   items: referencesItems,
                   fun: (val) {
@@ -175,6 +232,20 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                   },
                   label: "References",
                 ).build(),
+                _currUser.isAdmin() == true
+                    ? Dropdown<User>(
+                        selected: _selectedUser,
+                        items: _users,
+                        fun: (val) {
+                          setState(() {
+                            _selectedUser = val;
+                          });
+                        },
+                        label: "Select User",
+                      ).build()
+                    : const SizedBox(
+                        height: 0,
+                      ),
                 _address.builder(),
                 _place.builder(),
                 _mobile.builder(),
@@ -191,7 +262,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                   },
                   label: "Product 1",
                 ).build(),
-                Dropdown(
+                Dropdown<Model>(
                   selected: _prod2,
                   items: productItems,
                   fun: (val) {
@@ -201,7 +272,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                   },
                   label: "Product 2",
                 ).build(),
-                Dropdown(
+                Dropdown<Model>(
                   selected: _prod3,
                   items: productItems,
                   fun: (val) {
@@ -211,7 +282,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                   },
                   label: "Product 3",
                 ).build(),
-                Dropdown(
+                Dropdown<Model>(
                   selected: _prod4,
                   items: productItems,
                   fun: (val) {
@@ -221,7 +292,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                   },
                   label: "Product 4",
                 ).build(),
-                Dropdown(
+                Dropdown<Model>(
                   selected: _prod5,
                   items: productItems,
                   fun: (val) {
@@ -231,7 +302,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                   },
                   label: "Product 5",
                 ).build(),
-                Dropdown(
+                Dropdown<Model>(
                   selected: _prod6,
                   items: productItems,
                   fun: (val) {
@@ -245,8 +316,14 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                 _remark.builder(),
                 loading == true
                     ? Loader.circular
-                    : ElevatedButton(
-                        onPressed: save, child: const Text("Save")),
+                    : widget.madeLead == null
+                        ? ElevatedButton(
+                            onPressed: () => save(_currUser),
+                            child: const Text("Save"),
+                          )
+                        : const SizedBox(
+                            width: 0,
+                          ),
               ],
             ),
           );

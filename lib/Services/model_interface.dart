@@ -1,7 +1,8 @@
 abstract class Model {
-  display();
+  show();
   getQuery();
   format(List<dynamic> li);
   isEmpty();
   value();
+  int getId();
 }

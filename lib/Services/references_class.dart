@@ -11,7 +11,7 @@ class References implements Model {
   }
 
   @override
-  display() {
+  show() {
     return _desc;
   }
 
@@ -52,5 +52,10 @@ class References implements Model {
       print(e);
       return false;
     }
+  }
+
+  @override
+  int getId() {
+    return _id!;
   }
 }

@@ -64,7 +64,7 @@ class _ProductEntryScreenState extends State<ProductEntryScreen> {
                     itemBuilder: (context, index) => Card(
                       child: ListTile(
                         title: Text(
-                          data[index].display(),
+                          data[index].show(),
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),

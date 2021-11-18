@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/field_cover.dart';
 
 // ignore: must_be_immutable
@@ -83,8 +84,13 @@ class MyDate {
     _value = d;
   }
 
-  value() {
-    return _value;
+  DateTime value() {
+    return _value!;
+  }
+
+  setValue(String val) {
+    DateTime date = onlyDateFromDataBase(val);
+    _value = date;
   }
 
   bool isEmpty() {

@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/field_cover.dart';
-import 'package:walltex_app/Services/Model_Interface.dart';
 
-class Dropdown {
-  Model? selected;
-  List<Model>? items;
+String display(dynamic e) {
+  try {
+    return e.show();
+  } catch (e) {
+    return "Name";
+  }
+}
+
+class Dropdown<T> {
+  T? selected;
+  List<T>? items;
   Function? fun;
   String? label;
 
   Dropdown({this.items, this.fun, this.selected, this.label});
 
-  List<DropdownMenuItem<Model>> buildItems(List<Model>? li) {
-    List<DropdownMenuItem<Model>>? list = li!
-        .map((e) => DropdownMenuItem<Model>(
+  List<DropdownMenuItem<T>> buildItems(List<T>? li) {
+    List<DropdownMenuItem<T>>? list = li!
+        .map((e) => DropdownMenuItem<T>(
               child: Text(
-                e.display(),
+                display(e!),
               ),
               value: e,
             ))
@@ -35,7 +42,7 @@ class Dropdown {
                 ),
           ),
           DropdownButtonHideUnderline(
-            child: DropdownButton<Model>(
+            child: DropdownButton<T>(
               items: buildItems(items),
               onChanged: (value) {
                 selected = value;

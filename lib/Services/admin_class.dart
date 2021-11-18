@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/Text_check.dart';
-import 'package:walltex_app/Screens/add_user_screen.dart';
-import 'package:walltex_app/Screens/lead_entry_screen.dart';
-import 'package:walltex_app/Screens/product_entry_screen.dart';
-import 'package:walltex_app/Screens/references_entry_screen.dart';
 import 'package:walltex_app/Screens/reset_password_screen.dart';
 import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/control.dart';
@@ -99,6 +95,8 @@ class Admin extends User {
       Control.addUserScreen,
       Control.productScreen,
       Control.referenceScreen,
+      Control.gainedLeadScreen,
+      Control.lostLeadScreen,
     ];
     return list;
   }

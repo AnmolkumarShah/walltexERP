@@ -55,6 +55,13 @@ class Input {
     _obscure = false;
   }
 
+  Input.multiline({String? label = "Placeholder"}) {
+    _controller = TextEditingController(text: "");
+    _label = label;
+    _inputType = TextInputType.multiline;
+    _obscure = false;
+  }
+
   Input.email({String? label = "Placeholder"}) {
     _controller = TextEditingController(text: "");
     _label = label;
@@ -75,6 +82,10 @@ class Input {
 
   String value() {
     return _controller!.value.text.trim();
+  }
+
+  void setValue(String val) {
+    _controller = TextEditingController(text: val);
   }
 
   bool isEmpty() {
