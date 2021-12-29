@@ -17,7 +17,6 @@ class Query {
       p1: p1!,
     );
     try {
-      print(query);
       final url = urlObject.getUrl();
       var result = await Network.get(url);
       dynamic data;
@@ -36,6 +35,7 @@ class Query {
     final UrlGlobal urlObject = UrlGlobal(
       p2: m.getQuery(),
     );
+
     try {
       final url = urlObject.getUrl();
       var result = await Network.get(url);
@@ -43,7 +43,6 @@ class Query {
       result = m.format(data);
       return result;
     } catch (e) {
-      print(e.toString());
       return [];
     }
   }

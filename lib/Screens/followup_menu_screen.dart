@@ -12,7 +12,6 @@ class FollowupMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(data);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Followup Menu"),

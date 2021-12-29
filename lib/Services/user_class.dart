@@ -180,7 +180,6 @@ class User {
 
   resetPassword(String? newP) async {
     dynamic check = await User.login(username: _name!, password: _password!);
-    print(check);
     if (check['value'] == true) {
       var result = await Query.execute(
         p1: '1',
@@ -190,8 +189,6 @@ class User {
           where usr_nm = '$_name' and pwd = '$_password'
         ''',
       );
-
-      print(result);
 
       if (result['status'] == 'success') {
         _password = newP;

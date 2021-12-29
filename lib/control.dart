@@ -1,4 +1,6 @@
 import 'package:walltex_app/Screens/add_user_screen.dart';
+import 'package:walltex_app/Screens/anniv_screen.dart';
+import 'package:walltex_app/Screens/birthday_screen.dart';
 import 'package:walltex_app/Screens/gained_lead_screen.dart';
 import 'package:walltex_app/Screens/lead_entry_screen.dart';
 import 'package:walltex_app/Screens/lost_lead_screen.dart';
@@ -29,6 +31,16 @@ class Control {
   static Map<String, Object> gainedLeadScreen = {
     "name": "Gained Leads",
     "value": const GainedLEad(),
+  };
+
+  static Map<String, Object> birthdayScreen = {
+    "name": "Birthday Screen",
+    "value": const BirthdayScreen(),
+  };
+
+  static Map<String, Object> annivScreen = {
+    "name": "Anniversary Screen",
+    "value": const AnnivScreen(),
   };
 
   static Map<String, Object> lostLeadScreen = {

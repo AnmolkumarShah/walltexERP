@@ -1,3 +1,4 @@
+import 'package:colorlizer/colorlizer.dart';
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Screens/lead_entry_screen.dart';
@@ -6,6 +7,7 @@ import 'package:walltex_app/Services/text_services.dart';
 class LeadTile extends StatelessWidget {
   dynamic data;
   LeadTile({Key? key, this.data}) : super(key: key);
+  ColorLizer colorlizer = ColorLizer();
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +24,17 @@ class LeadTile extends StatelessWidget {
       },
       child: Card(
         child: ListTile(
-          tileColor: Theme.of(context).primaryColor,
-          leading: const Icon(
-            Icons.book,
-            color: Colors.white,
-            size: 40,
-          ),
+          tileColor: colorlizer.getSpecialFiledColor([
+            Colors.blue[200],
+            Colors.amber[300],
+            Colors.red[300],
+            Colors.green[400],
+          ]),
+          // leading: const Icon(
+          //   Icons.book,
+          //   color: Colors.white,
+          //   size: 20,
+          // ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

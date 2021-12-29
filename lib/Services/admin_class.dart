@@ -97,6 +97,8 @@ class Admin extends User {
       Control.referenceScreen,
       Control.gainedLeadScreen,
       Control.lostLeadScreen,
+      Control.birthdayScreen,
+      Control.annivScreen,
     ];
     return list;
   }

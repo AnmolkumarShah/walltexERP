@@ -1,3 +1,4 @@
+import 'package:colorlizer/colorlizer.dart';
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Screens/followup_menu_screen.dart';
@@ -9,6 +10,7 @@ class FollowupTile extends StatelessWidget {
     Key? key,
     this.data,
   }) : super(key: key);
+  ColorLizer colorlizer = ColorLizer();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,12 @@ class FollowupTile extends StatelessWidget {
         tag: data['id'],
         child: Card(
           child: ListTile(
-            tileColor: Theme.of(context).primaryColor,
+            tileColor: colorlizer.getSpecialFiledColor([
+              Colors.blue[200],
+              Colors.amber[300],
+              Colors.red[300],
+              Colors.green[400],
+            ]),
             leading: const Icon(
               Icons.book,
               color: Colors.white,

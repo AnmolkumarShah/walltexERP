@@ -58,6 +58,12 @@ class _ProductEntryScreenState extends State<ProductEntryScreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Loader.circular;
                   }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: const Text("Error Occure"),
+                    );
+                  }
+                  print(snapshot.data);
                   List<Product> data = snapshot.data as List<Product>;
                   return ListView.builder(
                     itemCount: data.length,

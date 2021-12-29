@@ -28,7 +28,6 @@ class _AllFollowUpScreenState extends State<AllFollowUpScreen> {
             return Loader.circular;
           }
           dynamic data = snapshot.data;
-          print(data);
           return ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, index) => Card(

@@ -63,43 +63,51 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.amber[300],
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 300,
-            margin: const EdgeInsets.all(20),
-            padding: const EdgeInsets.symmetric(
-              vertical: 30,
-              horizontal: 30,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black,
-                  blurRadius: 60,
-                  spreadRadius: 10,
-                )
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                username.builder(),
-                password.builder(),
-                loading == true
-                    ? Loader.circular
-                    : ElevatedButton(
-                        onPressed: handleLogin,
-                        child: const Text("Login"),
-                      )
-              ],
-            ),
+      backgroundColor: Colors.black,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/back.jpg'),
+            fit: BoxFit.cover,
           ),
-        ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              height: 300,
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(
+                vertical: 30,
+                horizontal: 30,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 60,
+                    spreadRadius: 10,
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  username.builder(),
+                  password.builder(),
+                  loading == true
+                      ? Loader.circular
+                      : ElevatedButton(
+                          onPressed: handleLogin,
+                          child: const Text("Login"),
+                        )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
