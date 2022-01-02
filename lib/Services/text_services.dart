@@ -6,7 +6,7 @@ class TextHelper {
       "$label : $text",
       style: const TextStyle(
         color: Colors.black,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.bold,
         fontSize: 15,
       ),
     );

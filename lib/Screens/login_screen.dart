@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
+import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
@@ -16,11 +19,21 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final String reActivationNumber = "937103689";
   Input username = Input(label: "Username");
 
   Input password = Input.password(label: "Password");
 
   bool loading = false;
+
+  bool validity = true;
+
+  void setValidity(bool val) {
+    print(val);
+    setState(() {
+      validity = val;
+    });
+  }
 
   handleLogin() async {
     setState(() {
@@ -60,11 +73,27 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  dynamic companyData;
+
+  bool checkValidity(DateTime inputDate) {
+    if (inputDate.difference(DateTime.now()).inDays == 0) {
+      return false;
+    } else
+      // widget.validyCheckCallback!(true); // product not expired
+      return true;
+  }
+
+  int daysRemaining(DateTime inputDate) {
+    int days = inputDate.difference(DateTime.now()).inDays;
+    return days;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
+        width: double.infinity,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/back.jpg'),
@@ -75,7 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: 300,
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.symmetric(
                 vertical: 30,
@@ -92,18 +120,112 @@ class _LoginScreenState extends State<LoginScreen> {
                   )
                 ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  username.builder(),
-                  password.builder(),
-                  loading == true
-                      ? Loader.circular
-                      : ElevatedButton(
-                          onPressed: handleLogin,
-                          child: const Text("Login"),
+              child: FutureBuilder(
+                future: Query.execute(query: "select * from co"),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Loader.circular;
+                  }
+                  List<dynamic> data = snapshot.data as List<dynamic>;
+
+                  if (data.isEmpty) {
+                    return Center(
+                      child: Chip(
+                        label: Text(
+                            "Error Occured While Getting Company Information"),
+                      ),
+                    );
+                  }
+
+                  companyData = data[0];
+
+                  bool _isProductOpen = checkValidity(
+                      onlyDateFromDataBase(companyData['expdate']));
+
+                  // for testing
+                  // bool _isProductOpen = checkValidity(DateTime.now());
+
+                  if (_isProductOpen == false) {
+                    return Column(
+                      children: [
+                        Chip(label: Text("Product Expired")),
+                        ListTile(
+                          title: Text(
+                            "Please Contact $reActivationNumber for Product Reactivation",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            launch("tel://$reActivationNumber");
+                          },
+                          icon: Icon(
+                            Icons.call,
+                          ),
+                          label: Text("Make Call"),
                         )
-                ],
+                      ],
+                    );
+                  } else if (_isProductOpen == true) {
+                    return Column(
+                      children: [
+                        // name
+                        Text(
+                          companyData['Name'],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            (companyData['expdate'] != null ||
+                                    companyData['expdate'] != '' ||
+                                    onlyDateFromDataBase(
+                                            companyData['expdate']) !=
+                                        DateTime(1900))
+                                // expiry info
+                                ? Column(
+                                    children: [
+                                      ListTile(
+                                        title: Text(
+                                          "Product will expire on \n${dateFormatFromDataBase(companyData['expdate'])}",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      ListTile(
+                                        title: Text(
+                                          "You Have ${daysRemaining(onlyDateFromDataBase(companyData['expdate']))} Days Remaining",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : const SizedBox(
+                                    height: 0,
+                                  ),
+                            username.builder(),
+                            password.builder(),
+                            loading == true
+                                ? Loader.circular
+                                : ElevatedButton(
+                                    onPressed: handleLogin,
+                                    child: const Text("Login"),
+                                  ),
+                          ],
+                        )
+                      ],
+                    );
+                  } else {
+                    return Chip(label: Text("Unable To Connect To Server"));
+                  }
+                },
               ),
             ),
           ],

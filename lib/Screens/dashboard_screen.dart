@@ -1,12 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:walltex_app/Helpers/birthday_today.dart';
+import 'package:walltex_app/Helpers/drop_down_helper.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
+import 'package:walltex_app/Screens/lead_entry_screen.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/Widgets/followup_tile.dart';
-import 'package:walltex_app/Widgets/option_tile.dart';
+import 'package:walltex_app/control.dart';
 
 class Dashboard extends StatefulWidget {
   static const routeName = '/dashboard';
@@ -23,7 +25,8 @@ fetchFollowUp() async {
   from followup a
   left join leads b on a.leadid = b.id
   left join usr_mast c on a.sman = c.id
-  where a.isdone  = 0 and a.nextdate <= getdate()  
+  where a.isdone  = 0 and a.nextdate <= getdate()
+  order by a.id desc
   """;
   try {
     dynamic res = await Query.execute(query: query);
@@ -40,34 +43,54 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, Object>> extraOptionItems = [];
+
+    extraOptionItems.add(Control.addUserScreen);
+    extraOptionItems.add(Control.productScreen);
+    extraOptionItems.add(Control.referenceScreen);
+    extraOptionItems.add(Control.gainedLeadScreen);
+    extraOptionItems.add(Control.birthdayScreen);
+    extraOptionItems.add(Control.annivScreen);
+    extraOptionItems.add(Control.lostLeadScreen);
+
     User? currentUser =
         Provider.of<ControlProvider>(context, listen: false).getUser();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dashboard"),
+        elevation: 0,
+        actions: [
+          DropdownButtonHideUnderline(
+            child: DropdownButton(
+              value: extraOptionItems.first['name'].toString(),
+              iconSize: 40,
+              onChanged: (s) {
+                var data = s;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => extraOptionItems.firstWhere((e) =>
+                            e['name'].toString() == data.toString())['value']
+                        as Widget,
+                  ),
+                );
+              },
+              dropdownColor: Theme.of(context).colorScheme.primary,
+              style: TextStyle(color: Colors.white),
+              items: extraOptionItems
+                  .map((e) => DropdownMenuItem(
+                        value: e['name'].toString(),
+                        child: Text(e['name'].toString()),
+                        onTap: () {},
+                      ))
+                  .toList(),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
-          GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
-              childAspectRatio: 2.5,
-            ),
-            shrinkWrap: true,
-            itemCount: currentUser.availableOption().length,
-            itemBuilder: (context, index) {
-              final val = currentUser.availableOption();
-              return OptionTile(
-                title: val[index]['name'],
-                next: val[index]['value'],
-              );
-            },
-          ),
-          const SizedBox(
-            height: 20,
-          ),
+          BirthDayToday(),
           Container(
             color: Theme.of(context).primaryColor,
             padding: const EdgeInsets.all(10),
@@ -128,6 +151,26 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        elevation: 10,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Control.leadScreen['value'] as Widget,
+            ),
+          );
+        },
+        label: Row(
+          children: [
+            Icon(Icons.add_box_outlined),
+            const SizedBox(
+              width: 10,
+            ),
+            Text(Control.leadScreen['name'].toString()),
+          ],
+        ),
       ),
     );
   }

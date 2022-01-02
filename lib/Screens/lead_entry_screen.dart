@@ -85,7 +85,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
   final Input _name = Input(label: "Name");
   final Input _address = Input(label: "Address");
   final Input _place = Input(label: "Place");
-  final Input _mobile = Input.number(label: "Mobile");
+  final Input _mobile = Input.number(label: "Mobile Number without +91");
   final Input _email = Input.email(label: "Email");
   final MyDate _anniv = MyDate(label: "Anniv");
   final Input _material = Input(label: "Material");
@@ -219,111 +219,123 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
           }
 
           return SingleChildScrollView(
-            child: Column(
+            child: Stack(
               children: [
-                _name.builder(),
-                Dropdown<Model>(
-                  selected: _selectedReference,
-                  items: referencesItems,
-                  fun: (val) {
-                    setState(() {
-                      _selectedReference = val;
-                    });
-                  },
-                  label: "References",
-                ).build(),
-                _currUser.isAdmin() == true
-                    ? Dropdown<User>(
-                        selected: _selectedUser,
-                        items: _users,
-                        fun: (val) {
-                          setState(() {
-                            _selectedUser = val;
-                          });
-                        },
-                        label: "Select User",
-                      ).build()
+                Column(
+                  children: [
+                    _mobile.builder(),
+                    _name.builder(),
+                    Dropdown<Model>(
+                      selected: _selectedReference,
+                      items: referencesItems,
+                      fun: (val) {
+                        setState(() {
+                          _selectedReference = val;
+                        });
+                      },
+                      label: "References",
+                    ).build(),
+                    _currUser.isAdmin() == true
+                        ? Dropdown<User>(
+                            selected: _selectedUser,
+                            items: _users,
+                            fun: (val) {
+                              setState(() {
+                                _selectedUser = val;
+                              });
+                            },
+                            label: "Assigned To",
+                          ).build()
+                        : const SizedBox(
+                            height: 0,
+                          ),
+                    _address.builder(),
+                    _place.builder(),
+                    _email.builder(),
+                    _dob.builder(),
+                    _anniv.builder(),
+                    Dropdown(
+                      selected: _prod1,
+                      items: productItems,
+                      fun: (val) {
+                        setState(() {
+                          _prod1 = val;
+                        });
+                      },
+                      label: "Product 1",
+                    ).build(),
+                    Dropdown<Model>(
+                      selected: _prod2,
+                      items: productItems,
+                      fun: (val) {
+                        setState(() {
+                          _prod2 = val;
+                        });
+                      },
+                      label: "Product 2",
+                    ).build(),
+                    Dropdown<Model>(
+                      selected: _prod3,
+                      items: productItems,
+                      fun: (val) {
+                        setState(() {
+                          _prod3 = val;
+                        });
+                      },
+                      label: "Product 3",
+                    ).build(),
+                    Dropdown<Model>(
+                      selected: _prod4,
+                      items: productItems,
+                      fun: (val) {
+                        setState(() {
+                          _prod4 = val;
+                        });
+                      },
+                      label: "Product 4",
+                    ).build(),
+                    Dropdown<Model>(
+                      selected: _prod5,
+                      items: productItems,
+                      fun: (val) {
+                        setState(() {
+                          _prod5 = val;
+                        });
+                      },
+                      label: "Product 5",
+                    ).build(),
+                    Dropdown<Model>(
+                      selected: _prod6,
+                      items: productItems,
+                      fun: (val) {
+                        setState(() {
+                          _prod6 = val;
+                        });
+                      },
+                      label: "Product 6",
+                    ).build(),
+                    _material.builder(),
+                    _remark.builder(),
+                    loading == true
+                        ? Loader.circular
+                        : widget.madeLead == null
+                            ? ElevatedButton(
+                                onPressed: () => save(_currUser),
+                                child: const Text("Save"),
+                              )
+                            : const SizedBox(
+                                width: 0,
+                              ),
+                  ],
+                ),
+                loading == true
+                    ? AlertDialog(
+                        title: const Text("Loading..."),
+                        content: CircularProgressIndicator(),
+                      )
                     : const SizedBox(
                         height: 0,
                       ),
-                _address.builder(),
-                _place.builder(),
-                _mobile.builder(),
-                _email.builder(),
-                _dob.builder(),
-                _anniv.builder(),
-                Dropdown(
-                  selected: _prod1,
-                  items: productItems,
-                  fun: (val) {
-                    setState(() {
-                      _prod1 = val;
-                    });
-                  },
-                  label: "Product 1",
-                ).build(),
-                Dropdown<Model>(
-                  selected: _prod2,
-                  items: productItems,
-                  fun: (val) {
-                    setState(() {
-                      _prod2 = val;
-                    });
-                  },
-                  label: "Product 2",
-                ).build(),
-                Dropdown<Model>(
-                  selected: _prod3,
-                  items: productItems,
-                  fun: (val) {
-                    setState(() {
-                      _prod3 = val;
-                    });
-                  },
-                  label: "Product 3",
-                ).build(),
-                Dropdown<Model>(
-                  selected: _prod4,
-                  items: productItems,
-                  fun: (val) {
-                    setState(() {
-                      _prod4 = val;
-                    });
-                  },
-                  label: "Product 4",
-                ).build(),
-                Dropdown<Model>(
-                  selected: _prod5,
-                  items: productItems,
-                  fun: (val) {
-                    setState(() {
-                      _prod5 = val;
-                    });
-                  },
-                  label: "Product 5",
-                ).build(),
-                Dropdown<Model>(
-                  selected: _prod6,
-                  items: productItems,
-                  fun: (val) {
-                    setState(() {
-                      _prod6 = val;
-                    });
-                  },
-                  label: "Product 6",
-                ).build(),
-                _material.builder(),
-                _remark.builder(),
-                loading == true
-                    ? Loader.circular
-                    : widget.madeLead == null
-                        ? ElevatedButton(
-                            onPressed: () => save(_currUser),
-                            child: const Text("Save"),
-                          )
-                        : const SizedBox(
-                            width: 0,
-                          ),
               ],
             ),
           );

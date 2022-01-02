@@ -27,16 +27,16 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
   final MyDate _nextFollowup = MyDate(label: "Next Followup Date");
 
   final MySwitch gained = MySwitch(
-    tv: "Order gained",
-    fv: "Order Not Gained",
+    tv: "Order Gained : Yes",
+    fv: "Order Gained : No",
     val: false,
   );
 
   bool loading = false;
 
   final MySwitch closed = MySwitch(
-    tv: "Order Closed",
-    fv: "Order Not Closed",
+    tv: "Order Closed : Yes",
+    fv: "Order Closed : No",
     val: false,
   );
 
@@ -169,6 +169,11 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
   @override
   Widget build(BuildContext context) {
     handleSave() async {
+      if (gained.getValue() == true && closed.getValue() == true) {
+        showSnakeBar(
+            context, "Order Cannot be both Gained & Closed at same time !!!");
+        return;
+      }
       if (check()) {
         if (gained.getValue() == true || closed.getValue() == true) {
           // final update into lead
