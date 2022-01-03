@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:walltex_app/Screens/add_user_screen.dart';
 import 'package:walltex_app/Screens/anniv_screen.dart';
 import 'package:walltex_app/Screens/birthday_screen.dart';
+import 'package:walltex_app/Screens/followup_type_entry_screen.dart';
 import 'package:walltex_app/Screens/gained_lead_screen.dart';
 import 'package:walltex_app/Screens/lead_entry_screen.dart';
 import 'package:walltex_app/Screens/lost_lead_screen.dart';
@@ -49,7 +50,12 @@ class Control {
     "value": const LostLead(),
   };
 
-  static Widget myEnvolop(Color? color, Widget child,{double padding = 10}) {
+  static Map<String, Object> followupTypeScreen = {
+    "name": "Followup Master",
+    "value": const FollowupTypeEntry(),
+  };
+
+  static Widget myEnvolop(Color? color, Widget child, {double padding = 10}) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 2.5),
       padding: EdgeInsets.all(padding),

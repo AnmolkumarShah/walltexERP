@@ -3,6 +3,7 @@ import 'package:geolocator_platform_interface/src/models/position.dart';
 import 'package:provider/provider.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/date_selected_helper.dart';
+import 'package:walltex_app/Helpers/drop_down_helper.dart';
 import 'package:walltex_app/Helpers/format_date.dart';
 import 'package:walltex_app/Helpers/get_geo_location.dart';
 import 'package:walltex_app/Helpers/querie.dart';
@@ -10,6 +11,7 @@ import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/switch_helper.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
+import 'package:walltex_app/Services/followup_type.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 
 class VisitDetailScreen extends StatefulWidget {
@@ -21,6 +23,42 @@ class VisitDetailScreen extends StatefulWidget {
 }
 
 class _VisitDetailScreenState extends State<VisitDetailScreen> {
+  static int count = 0;
+  List<FollowupType>? followupTypeItems;
+  FollowupType? _selectedFollowupType;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    count = 0;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    count = 0;
+  }
+
+  Future init() async {
+    List<FollowupType> fTItems = await Query.fetch(FollowupType());
+
+    fTItems.insert(0, FollowupType(id: -1, desc: "Select Type"));
+
+    setState(() {
+      followupTypeItems = fTItems;
+
+      _selectedFollowupType = fTItems.first;
+    });
+
+    return;
+  }
+
+  _fetchData() async {
+    if (count > 0) return;
+    await init();
+    count++;
+  }
+
   final Input _remark = Input.multiline(label: "Remark");
   final Input _details = Input(label: "Details");
 
@@ -59,7 +97,12 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
 
   majorChange() async {
     try {
-      Position pos = await determinePosition();
+      Position? pos;
+      try {
+        pos = await determinePosition();
+      } catch (e) {
+        pos = rejectedPosition();
+      }
       double? lat = pos.latitude;
       double? lon = pos.longitude;
       String? presentDate = formateDate(DateTime.now());
@@ -75,7 +118,7 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
         update leads
         set lat = $lat, long = $lon,ordergain = ${gained.getIntVal()}, orderlost = ${closed.getIntVal()},
         nextfollowupon = '$presentDate',gaindetails = '${_details.value()}', 
-        lostdetails = '${_details.value()}'
+        lostdetails = '${_details.value()}',followup_type = ${_selectedFollowupType!.getId()}
         where id = ${widget.data['leadid']}
         """,
       );
@@ -85,7 +128,7 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
         query: """
 
         update followup
-        set isdone = 1,isdoneid = $currId
+        set isdone = 1,isdoneid = $currId,followup_type = ${_selectedFollowupType!.getId()}
         where leadid = ${widget.data['leadid']}
         """,
       );
@@ -107,7 +150,12 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
     try {
       String? presentDate = formateDate(DateTime.now());
       String? followupDate = formateDate(_nextFollowup.value());
-      Position pos = await determinePosition();
+      Position? pos;
+      try {
+        pos = await determinePosition();
+      } catch (e) {
+        pos = rejectedPosition();
+      }
       double? lat = pos.latitude;
       double? lon = pos.longitude;
       String? remark = _remark.value();
@@ -120,7 +168,7 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
         query: """
 
         update followup
-        set isdone = 1,isdoneid = $currId
+        set isdone = 1,isdoneid = $currId,followup_type = ${_selectedFollowupType!.getId()}
         where leadid = ${widget.data['leadid']}
 
         """,
@@ -131,9 +179,10 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
         query: """
 
         insert into followup(followupdt,leadid,sman,nextrem,nextdate,
-        isdone,isdoneid,lat,long,leadremarks)
+        isdone,isdoneid,lat,long,leadremarks,followup_type)
         values('$presentDate',${widget.data['leadid']},$currId,'$remark','$followupDate',
-        $isDone,$currId,$lat,$lon,'${widget.data['remarks']}')
+        $isDone,$currId,$lat,$lon,'${widget.data['remarks']}',
+        ${_selectedFollowupType!.getId()})
 
         """,
       );
@@ -174,6 +223,10 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
             context, "Order Cannot be both Gained & Closed at same time !!!");
         return;
       }
+      if (_selectedFollowupType!.getId() == -1) {
+        showSnakeBar(context, "Select A Valid Followup Type");
+        return;
+      }
       if (check()) {
         if (gained.getValue() == true || closed.getValue() == true) {
           // final update into lead
@@ -212,25 +265,42 @@ class _VisitDetailScreenState extends State<VisitDetailScreen> {
       appBar: AppBar(
         title: const Text("Visit Detail"),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            Chip(
-                label: Text(
-                    "Last Date : ${dateFormatFromDataBase(widget.data['nextdate'])} ")),
-            _remark.builder(),
-            _nextFollowup.builder(),
-            gained.builder(),
-            closed.builder(),
-            loading == true
-                ? Loader.circular
-                : ElevatedButton(
-                    onPressed: handleSave,
-                    child: const Text("Save"),
-                  )
-          ],
-        ),
-      ),
+      body: FutureBuilder(
+          future: _fetchData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Loader.circular;
+            }
+            return Center(
+              child: Column(
+                children: [
+                  Chip(
+                      label: Text(
+                          "Last Date : ${dateFormatFromDataBase(widget.data['nextdate'])} ")),
+                  Dropdown<FollowupType>(
+                    selected: _selectedFollowupType,
+                    items: followupTypeItems,
+                    fun: (val) {
+                      setState(() {
+                        _selectedFollowupType = val;
+                      });
+                    },
+                    label: "Followup Type",
+                  ).build(),
+                  _remark.builder(),
+                  _nextFollowup.builder(),
+                  gained.builder(),
+                  closed.builder(),
+                  loading == true
+                      ? Loader.circular
+                      : ElevatedButton(
+                          onPressed: handleSave,
+                          child: const Text("Save"),
+                        )
+                ],
+              ),
+            );
+          }),
     );
   }
 }

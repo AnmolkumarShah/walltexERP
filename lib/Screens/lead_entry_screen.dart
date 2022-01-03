@@ -14,6 +14,7 @@ import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/product_class.dart';
 import 'package:walltex_app/Services/references_class.dart';
 import 'package:walltex_app/Services/user_class.dart';
+import 'package:walltex_app/Widgets/lead_tile.dart';
 import 'package:walltex_app/control.dart';
 
 class LeadEntryScreen extends StatefulWidget {
@@ -28,6 +29,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
   static int count = 0;
   List<Product>? productItems;
   List<References>? referencesItems;
+
   Product? _prod1, _prod2, _prod3, _prod4, _prod5, _prod6;
   References? _selectedReference;
   List<User>? _users;
@@ -50,6 +52,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
   Future init() async {
     List<Product> pItems = await Query.fetch(Product());
     List<References> rItems = await Query.fetch(References());
+
     List<User>? userList = await User.allUsers();
 
     pItems.insert(0, Product(id: -1, desc: "Select Product"));
@@ -59,6 +62,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     setState(() {
       productItems = pItems;
       referencesItems = rItems;
+
       _users = userList;
 
       _prod1 = pItems.first;
@@ -201,6 +205,75 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     setState(() {});
   }
 
+  moreInfoFromNumber() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return FutureBuilder(
+          future: Query.execute(
+              query:
+                  "select * from leads where Mobile = '${_mobile.value()}' "),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Loader.circular;
+            }
+            List<dynamic> data = snapshot.data as List<dynamic>;
+            if (data.isEmpty) {
+              return Container(
+                padding: EdgeInsets.all(20),
+                color: Colors.amber,
+                child: Text("No Previous Leads Whith this number"),
+              );
+            }
+            return Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: Text("Previous Leads With this Number",
+                      style: Control.eventStyle),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        color: Colors.green,
+                        child: Text("Gained", textAlign: TextAlign.center),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        color: Colors.greenAccent[200],
+                        child: Text("Pending", textAlign: TextAlign.center),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        color: Colors.red,
+                        child: Text("Lost", textAlign: TextAlign.center),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) => LeadTile(
+                      data: data[index],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final User _currUser =
@@ -223,7 +296,12 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
               children: [
                 Column(
                   children: [
-                    _mobile.builder(),
+                    FocusScope(
+                      onFocusChange: (v) {
+                        if (!v) moreInfoFromNumber();
+                      },
+                      child: _mobile.builder(),
+                    ),
                     _name.builder(),
                     Dropdown<Model>(
                       selected: _selectedReference,

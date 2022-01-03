@@ -52,6 +52,7 @@ class _DashboardState extends State<Dashboard> {
     extraOptionItems.add(Control.birthdayScreen);
     extraOptionItems.add(Control.annivScreen);
     extraOptionItems.add(Control.lostLeadScreen);
+    extraOptionItems.add(Control.followupTypeScreen);
 
     User? currentUser =
         Provider.of<ControlProvider>(context, listen: false).getUser();
@@ -59,34 +60,37 @@ class _DashboardState extends State<Dashboard> {
       appBar: AppBar(
         title: const Text("Dashboard"),
         elevation: 0,
-        actions: [
-          DropdownButtonHideUnderline(
-            child: DropdownButton(
-              value: extraOptionItems.first['name'].toString(),
-              iconSize: 40,
-              onChanged: (s) {
-                var data = s;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => extraOptionItems.firstWhere((e) =>
-                            e['name'].toString() == data.toString())['value']
-                        as Widget,
+        actions: currentUser.isAdmin() == true
+            ? [
+                DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                    value: extraOptionItems.first['name'].toString(),
+                    iconSize: 40,
+                    onChanged: (s) {
+                      var data = s;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => extraOptionItems.firstWhere(
+                              (e) =>
+                                  e['name'].toString() ==
+                                  data.toString())['value'] as Widget,
+                        ),
+                      );
+                    },
+                    dropdownColor: Theme.of(context).colorScheme.primary,
+                    style: TextStyle(color: Colors.white),
+                    items: extraOptionItems
+                        .map((e) => DropdownMenuItem(
+                              value: e['name'].toString(),
+                              child: Text(e['name'].toString()),
+                              onTap: () {},
+                            ))
+                        .toList(),
                   ),
-                );
-              },
-              dropdownColor: Theme.of(context).colorScheme.primary,
-              style: TextStyle(color: Colors.white),
-              items: extraOptionItems
-                  .map((e) => DropdownMenuItem(
-                        value: e['name'].toString(),
-                        child: Text(e['name'].toString()),
-                        onTap: () {},
-                      ))
-                  .toList(),
-            ),
-          ),
-        ],
+                ),
+              ]
+            : [],
       ),
       body: Column(
         children: [

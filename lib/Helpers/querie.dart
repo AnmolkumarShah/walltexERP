@@ -9,6 +9,7 @@ class Query {
   static const allUserMaster = "select * from  usr_mast";
   static const allReferences = "select * from refferance";
   static const allProduct = "select * from product";
+  static const allFollowupType = "select * from followup_type";
 
   // method for all  query language commands
   static Future execute({String? query, String? p1 = '0'}) async {

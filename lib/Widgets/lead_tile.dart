@@ -4,32 +4,53 @@ import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Screens/lead_entry_screen.dart';
 import 'package:walltex_app/Services/text_services.dart';
 
-class LeadTile extends StatelessWidget {
+class LeadTile extends StatefulWidget {
   dynamic data;
   LeadTile({Key? key, this.data}) : super(key: key);
+
+  @override
+  State<LeadTile> createState() => _LeadTileState();
+}
+
+class _LeadTileState extends State<LeadTile> {
   ColorLizer colorlizer = ColorLizer();
+
+  Color? _tileColor;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.data['ordergain'] == false &&
+        widget.data['orderlost'] == false) {
+      setState(() {
+        _tileColor = Colors.greenAccent[200];
+      });
+    }
+
+    if (widget.data['ordergain'] == true) {
+      setState(() {
+        _tileColor = Colors.green;
+      });
+    }
+
+    if (widget.data['orderlost'] == true) {
+      setState(() {
+        _tileColor = Colors.red;
+      });
+    }
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => LeadEntryScreen(
-              madeLead: data['id'],
+              madeLead: widget.data['id'],
             ),
           ),
         );
       },
       child: Card(
         child: ListTile(
-          tileColor: colorlizer.getSpecialFiledColor([
-            Colors.blue[200],
-            Colors.amber[300],
-            Colors.red[300],
-            Colors.green[400],
-          ]),
+          tileColor: _tileColor,
           // leading: const Icon(
           //   Icons.book,
           //   color: Colors.white,
@@ -41,21 +62,24 @@ class LeadTile extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextHelper.textStyle(data['Name'], "Name"),
-                  TextHelper.textStyle(data['place'], "Place"),
+                  TextHelper.textStyle(widget.data['Name'], "Name"),
+                  TextHelper.textStyle(widget.data['place'], "Place"),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextHelper.textStyle(data['Mobile'], "Mobile"),
-                  TextHelper.textStyle(data['sman'].toString(), "Salesman"),
+                  TextHelper.textStyle(widget.data['Mobile'], "Mobile"),
+                  TextHelper.textStyle(
+                      widget.data['sman'].toString(), "Salesman"),
                 ],
               ),
-              TextHelper.textStyle(
-                  dateFormatFromDataBase(data['nextfollowupon']),
-                  "Followup on"),
-              TextHelper.textStyle(data['nextfollowuprem'], "Remark"),
+              widget.data['nextfollowupon'] == null
+                  ? const SizedBox(height: 0)
+                  : TextHelper.textStyle(
+                      dateFormatFromDataBase(widget.data['nextfollowupon']),
+                      "Followup on"),
+              TextHelper.textStyle(widget.data['nextfollowuprem'], "Remark"),
             ],
           ),
         ),

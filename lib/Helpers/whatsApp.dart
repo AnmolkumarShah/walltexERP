@@ -5,8 +5,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 
 class WhatsAppContact extends StatelessWidget {
-  WhatsAppContact({Key? key, required this.number}) : super(key: key);
+  WhatsAppContact({Key? key, required this.number, this.onlyIcon = false})
+      : super(key: key);
   String number;
+  bool onlyIcon;
   @override
   Widget build(BuildContext context) {
     TextEditingController? _query = TextEditingController(text: "");
@@ -15,16 +17,23 @@ class WhatsAppContact extends StatelessWidget {
       // padding: EdgeInsets.all(15),
       child: Form(
         key: _formKey,
-        child: TextButton.icon(
-          onPressed: () {
-            openwhatsapp(context, "Hi, ", number);
-          },
-          icon: Icon(Icons.maps_ugc_sharp),
-          label: Text(
-            "Send Message",
-            style: TextStyle(color: Colors.green),
-          ),
-        ),
+        child: onlyIcon == true
+            ? IconButton(
+                onPressed: () {
+                  openwhatsapp(context, "Hi, ", number);
+                },
+                icon: Icon(Icons.maps_ugc_sharp),
+              )
+            : TextButton.icon(
+                onPressed: () {
+                  openwhatsapp(context, "Hi, ", number);
+                },
+                icon: Icon(Icons.maps_ugc_sharp),
+                label: Text(
+                  "Send Message",
+                  style: TextStyle(color: Colors.green),
+                ),
+              ),
       ),
     );
   }

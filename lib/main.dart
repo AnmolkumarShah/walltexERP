@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
 import 'package:walltex_app/Screens/company_selection_screen.dart';
-import 'package:walltex_app/Screens/login_screen.dart';
 
 void main() {
   runApp(const MyApp());

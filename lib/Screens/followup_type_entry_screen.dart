@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
+import 'package:walltex_app/Services/followup_type.dart';
 import 'package:walltex_app/Services/loader_services.dart';
-import 'package:walltex_app/Services/product_class.dart';
 import 'package:walltex_app/control.dart';
 
-class ProductEntryScreen extends StatefulWidget {
-  const ProductEntryScreen({Key? key}) : super(key: key);
+class FollowupTypeEntry extends StatefulWidget {
+  const FollowupTypeEntry({Key? key}) : super(key: key);
 
   @override
-  State<ProductEntryScreen> createState() => _ProductEntryScreenState();
+  State<FollowupTypeEntry> createState() => _FollowupTypeEntryState();
 }
 
-class _ProductEntryScreenState extends State<ProductEntryScreen> {
-  final Input _product = Input(label: "Product Name");
+class _FollowupTypeEntryState extends State<FollowupTypeEntry> {
+  final Input _followupType = Input(label: "Followup Type Name");
   bool loading = false;
 
   handleSave() async {
@@ -22,17 +22,17 @@ class _ProductEntryScreenState extends State<ProductEntryScreen> {
       loading = true;
     });
 
-    if (!_product.isEmpty()) {
-      Product prod = Product(desc: _product.value(), id: -1);
+    if (!_followupType.isEmpty()) {
+      FollowupType prod = FollowupType(desc: _followupType.value(), id: -1);
       dynamic res = await prod.save();
       if (res == true) {
-        showSnakeBar(context, "Product Saved Successfully");
+        showSnakeBar(context, "Type Saved Successfully");
         Navigator.pop(context);
       } else {
-        showSnakeBar(context, "Error In Product Saving");
+        showSnakeBar(context, "Error In Type Saving");
       }
     } else {
-      showSnakeBar(context, "Enter Product Name");
+      showSnakeBar(context, "Enter Type Name");
     }
 
     setState(() {
@@ -44,7 +44,7 @@ class _ProductEntryScreenState extends State<ProductEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Control.productScreen['name'].toString()),
+        title: Text(Control.followupTypeScreen['name'].toString()),
       ),
       body: Center(
         child: Column(
@@ -52,7 +52,7 @@ class _ProductEntryScreenState extends State<ProductEntryScreen> {
           children: [
             Expanded(
               child: FutureBuilder(
-                future: Query.fetch(Product()),
+                future: Query.fetch(FollowupType()),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Loader.circular;
@@ -62,8 +62,7 @@ class _ProductEntryScreenState extends State<ProductEntryScreen> {
                       child: const Text("Error Occure"),
                     );
                   }
-                  print(snapshot.data);
-                  List<Product> data = snapshot.data as List<Product>;
+                  List<FollowupType> data = snapshot.data as List<FollowupType>;
                   return ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (context, index) => Card(
@@ -84,10 +83,10 @@ class _ProductEntryScreenState extends State<ProductEntryScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _product.builder(),
+                  _followupType.builder(),
                   TextButton(
                     onPressed: handleSave,
-                    child: const Text("Save Product"),
+                    child: const Text("Save Followup Type"),
                   )
                 ],
               ),
