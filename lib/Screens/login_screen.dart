@@ -9,6 +9,7 @@ import 'package:walltex_app/Providers/control_provider.dart';
 import 'package:walltex_app/Screens/dashboard_screen.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/user_class.dart';
+import 'package:walltex_app/control.dart';
 
 // ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
@@ -129,11 +130,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                   List<dynamic> data = snapshot.data as List<dynamic>;
 
-                  if (data.isEmpty) {
+                  if (data.isEmpty || data[0]['expdate'] == null) {
                     return Center(
-                      child: Chip(
-                        label: Text(
-                            "Error Occured While Getting Company Information"),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Error Occured While Getting Company Information\nCheck! Have you entered correct company Id ?",
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 10),
+                          Text("Entered Id Refer to ${data[0]['Name']}",
+                              style: Control.onlybold),
+                        ],
                       ),
                     );
                   }
