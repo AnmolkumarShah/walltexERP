@@ -1,7 +1,11 @@
 import 'package:intl/intl.dart';
 
+String dateFormat(DateTime dt) {
+  return  DateFormat.yMMMEd().format(dt);
+}
+
 String dateFormatFromDataBase(String value) {
-  return DateFormat.yMMMEd().format(DateTime.fromMillisecondsSinceEpoch(
+  return dateFormat(DateTime.fromMillisecondsSinceEpoch(
       int.parse(value.toString().split('(')[1].toString().split('+')[0])));
 }
 

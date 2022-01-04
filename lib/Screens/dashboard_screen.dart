@@ -18,14 +18,14 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-fetchFollowUp() async {
+fetchFollowUp(int id) async {
   String query = """
   select a.id,b.Name, b.place,b.mobile,b.remarks,
   c.usr_nm as SalesMan, a.nextdate,a.nextrem ,a.leadid
   from followup a
   left join leads b on a.leadid = b.id
   left join usr_mast c on a.sman = c.id
-  where a.isdone  = 0 and a.nextdate <= getdate()
+  where a.isdone  = 0 and a.nextdate <= getdate() and a.sman = $id
   order by a.id desc
   """;
   try {
@@ -94,7 +94,7 @@ class _DashboardState extends State<Dashboard> {
       ),
       body: Column(
         children: [
-          BirthDayToday(),
+          BirthDayToday(id: currentUser.getId()),
           Container(
             color: Theme.of(context).primaryColor,
             padding: const EdgeInsets.all(10),
@@ -128,7 +128,7 @@ class _DashboardState extends State<Dashboard> {
             child: RefreshIndicator(
               onRefresh: () => refresh(),
               child: FutureBuilder(
-                future: fetchFollowUp(),
+                future: fetchFollowUp(currentUser.getId()),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Loader.circular;

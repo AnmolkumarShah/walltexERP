@@ -9,13 +9,14 @@ import 'package:walltex_app/control.dart';
 import 'date_format_from_data_base.dart';
 
 class BirthDayToday extends StatelessWidget {
-  const BirthDayToday({Key? key}) : super(key: key);
+  BirthDayToday({Key? key,required this.id}) : super(key: key);
+  int id;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future:
-          Query.execute(query: "select id,Name,dob,anniv,Mobile from leads"),
+          Query.execute(query: "select id,Name,dob,anniv,Mobile from leads where sman = $id"),
       builder: (context, snapshot) {
         if (snapshot.hasError || snapshot.data == null) {
           return Container(
@@ -135,7 +136,7 @@ class Tile extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(data['Name'], style: Control.eventStyle),
-        subtitle: Text(data['Type'], style: Control.onlybold),
+        subtitle: Text(data['Type'], style: TextStyle(fontSize: 12)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

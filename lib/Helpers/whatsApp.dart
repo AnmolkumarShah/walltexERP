@@ -61,7 +61,8 @@ openwhatsapp(BuildContext context, String text, String number) async {
   try {
     String msg = text;
     var whatsapp = "+91$number";
-    var whatsappURlAndroid = "whatsapp://send?phone=" + whatsapp + "&text=$msg";
+    var whatsappURlAndroid =
+        "https://whatsapp://send?phone=" + whatsapp + "&text=$msg";
     var whatappURLIos = "https://wa.me/$whatsapp?text=${Uri.parse(msg)}";
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       // for iOS phone only

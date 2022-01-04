@@ -49,7 +49,7 @@ class FollowupTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextHelper.textStyle(data['mobile'], "Mobile"),
-                  TextHelper.textStyle(data['SalesMan'], "Salesman"),
+                  TextHelper.textStyle(data['SalesMan'], "Assigned To"),
                 ],
               ),
               TextHelper.textStyle(

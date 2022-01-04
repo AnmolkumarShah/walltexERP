@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/date_selected_helper.dart';
 import 'package:walltex_app/Helpers/drop_down_helper.dart';
 import 'package:walltex_app/Helpers/format_date.dart';
@@ -180,7 +181,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     }
   }
 
-  getSet(int id) async {
+  getSet(int id, {bool noProduct = false}) async {
     dynamic res = await Lead.getLead(id);
     _name.setValue(res['Name']);
     _address.setValue(res['address']);
@@ -188,23 +189,30 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     _mobile.setValue(res['Mobile']);
     _email.setValue(res['email']);
     _address.setValue(res['address']);
-    _remark.setValue(res['remarks']);
-    _material.setValue(res['material']);
+
     _anniv.setValue(res['anniv']);
     _dob.setValue(res['dob']);
 
-    _prod1 = productItems!.firstWhere((e) => e.getId() == res['product1']);
-    _prod2 = productItems!.firstWhere((e) => e.getId() == res['product2']);
-    _prod3 = productItems!.firstWhere((e) => e.getId() == res['product3']);
-    _prod4 = productItems!.firstWhere((e) => e.getId() == res['product4']);
-    _prod5 = productItems!.firstWhere((e) => e.getId() == res['product5']);
-    _prod6 = productItems!.firstWhere((e) => e.getId() == res['product6']);
+//  only at time of auto fillup with mobile number
+    if (noProduct == false) {
+      _prod1 = productItems!.firstWhere((e) => e.getId() == res['product1']);
+      _prod2 = productItems!.firstWhere((e) => e.getId() == res['product2']);
+      _prod3 = productItems!.firstWhere((e) => e.getId() == res['product3']);
+      _prod4 = productItems!.firstWhere((e) => e.getId() == res['product4']);
+      _prod5 = productItems!.firstWhere((e) => e.getId() == res['product5']);
+      _prod6 = productItems!.firstWhere((e) => e.getId() == res['product6']);
+
+      _remark.setValue(res['remarks']);
+      _material.setValue(res['material']);
+    }
+
     _selectedReference =
         referencesItems!.firstWhere((e) => e.getId() == res['ref']);
     _selectedUser = _users!.firstWhere((e) => e.getId() == res['sman']);
     setState(() {});
   }
 
+  // previous lead info
   moreInfoFromNumber() {
     showModalBottomSheet(
       context: context,
@@ -218,6 +226,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
               return Loader.circular;
             }
             List<dynamic> data = snapshot.data as List<dynamic>;
+
             if (data.isEmpty) {
               return Container(
                 padding: EdgeInsets.all(20),
@@ -225,6 +234,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                 child: Text("No Previous Leads Whith this number"),
               );
             }
+            getSet(data[0]['id'], noProduct: true);
             return Column(
               children: [
                 Container(
@@ -296,9 +306,17 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
               children: [
                 Column(
                   children: [
+                    widget.madeLead != null
+                        ? Chip(
+                            label: Text(
+                                "Date Created : ${dateFormat(_dob.value())}"),
+                          )
+                        : const SizedBox(width: 0),
                     FocusScope(
                       onFocusChange: (v) {
-                        if (!v) moreInfoFromNumber();
+                        if (!v) {
+                          moreInfoFromNumber();
+                        }
                       },
                       child: _mobile.builder(),
                     ),

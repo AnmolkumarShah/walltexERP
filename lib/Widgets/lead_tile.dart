@@ -71,7 +71,7 @@ class _LeadTileState extends State<LeadTile> {
                 children: [
                   TextHelper.textStyle(widget.data['Mobile'], "Mobile"),
                   TextHelper.textStyle(
-                      widget.data['sman'].toString(), "Salesman"),
+                      widget.data['sman'].toString(), "Assigned To"),
                 ],
               ),
               widget.data['nextfollowupon'] == null

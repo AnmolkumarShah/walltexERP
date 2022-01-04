@@ -19,7 +19,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final String reActivationNumber = "937103689";
+  final String reActivationNumber1 = "9373103689";
+  final String reActivationNumber2 = "7276092220";
   Input username = Input(label: "Username");
 
   Input password = Input.password(label: "Password");
@@ -76,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
   dynamic companyData;
 
   bool checkValidity(DateTime inputDate) {
-    if (inputDate.difference(DateTime.now()).inDays == 0) {
+    if (inputDate.difference(DateTime.now()).inDays <= 0) {
       return false;
     } else
       // widget.validyCheckCallback!(true); // product not expired
@@ -143,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onlyDateFromDataBase(companyData['expdate']));
 
                   // for testing
-                  // bool _isProductOpen = checkValidity(DateTime.now());
+                  // bool _isProductOpen = checkValidity(DateTime(1900));
 
                   if (_isProductOpen == false) {
                     return Column(
@@ -151,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Chip(label: Text("Product Expired")),
                         ListTile(
                           title: Text(
-                            "Please Contact $reActivationNumber for Product Reactivation",
+                            "Please Contact\n$reActivationNumber1 or $reActivationNumber2\nfor Product Reactivation",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -160,12 +161,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            launch("tel://$reActivationNumber");
+                            launch("tel://$reActivationNumber1");
                           },
                           icon: Icon(
                             Icons.call,
                           ),
-                          label: Text("Make Call"),
+                          label: Text("Cal $reActivationNumber1"),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            launch("tel://$reActivationNumber2");
+                          },
+                          icon: Icon(
+                            Icons.call,
+                          ),
+                          label: Text("Call $reActivationNumber2"),
                         )
                       ],
                     );
