@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:walltex_app/Helpers/birthday_today.dart';
-import 'package:walltex_app/Helpers/drop_down_helper.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
-import 'package:walltex_app/Screens/lead_entry_screen.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/Widgets/followup_tile.dart';
@@ -48,10 +46,11 @@ class _DashboardState extends State<Dashboard> {
     extraOptionItems.add(Control.addUserScreen);
     extraOptionItems.add(Control.productScreen);
     extraOptionItems.add(Control.referenceScreen);
-    extraOptionItems.add(Control.gainedLeadScreen);
+    // extraOptionItems.add(Control.gainedLeadScreen);
     extraOptionItems.add(Control.birthdayScreen);
     extraOptionItems.add(Control.annivScreen);
-    extraOptionItems.add(Control.lostLeadScreen);
+    extraOptionItems.add(Control.allLeadScreen);
+    // extraOptionItems.add(Control.lostLeadScreen);
     extraOptionItems.add(Control.followupTypeScreen);
 
     User? currentUser =

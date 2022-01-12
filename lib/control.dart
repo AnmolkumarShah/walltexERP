@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Screens/add_user_screen.dart';
+import 'package:walltex_app/Screens/all_leads_screen.dart';
 import 'package:walltex_app/Screens/anniv_screen.dart';
 import 'package:walltex_app/Screens/birthday_screen.dart';
 import 'package:walltex_app/Screens/followup_type_entry_screen.dart';
@@ -53,6 +54,11 @@ class Control {
   static Map<String, Object> followupTypeScreen = {
     "name": "Followup Master",
     "value": const FollowupTypeEntry(),
+  };
+
+  static Map<String, Object> allLeadScreen = {
+    "name": "All Leads",
+    "value": const AllLeads(),
   };
 
   static Widget myEnvolop(Color? color, Widget child, {double padding = 10}) {

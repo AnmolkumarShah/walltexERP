@@ -85,7 +85,7 @@ openwhatsapp(BuildContext context, String text, String number) async {
       }
     }
   } catch (e) {
-    print(e);
+    print("Anmol " + e.toString());
     showSnakeBar(context, e.toString());
   }
 }

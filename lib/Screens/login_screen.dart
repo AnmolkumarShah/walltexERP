@@ -9,7 +9,6 @@ import 'package:walltex_app/Providers/control_provider.dart';
 import 'package:walltex_app/Screens/dashboard_screen.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/user_class.dart';
-import 'package:walltex_app/control.dart';
 
 // ignore: must_be_immutable
 class LoginScreen extends StatefulWidget {
@@ -125,6 +124,12 @@ class _LoginScreenState extends State<LoginScreen> {
               child: FutureBuilder(
                 future: Query.execute(query: "select * from co"),
                 builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: const Text(
+                          "Error Occured, It may be fault at the Server Side, PLease Check"),
+                    );
+                  }
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Loader.circular;
                   }
@@ -139,8 +144,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 10),
-                          Text("Entered Id Refer to ${data[0]['Name']}",
-                              style: Control.onlybold),
+                          // Text("Entered Id Refer to ${data[0]['Name']}",
+                          //     style: Control.onlybold),
                         ],
                       ),
                     );
