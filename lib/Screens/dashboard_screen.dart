@@ -52,6 +52,7 @@ class _DashboardState extends State<Dashboard> {
     extraOptionItems.add(Control.allLeadScreen);
     // extraOptionItems.add(Control.lostLeadScreen);
     extraOptionItems.add(Control.followupTypeScreen);
+    extraOptionItems.add(Control.taskTypeScreen);
 
     User? currentUser =
         Provider.of<ControlProvider>(context, listen: false).getUser();

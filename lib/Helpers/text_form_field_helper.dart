@@ -84,11 +84,19 @@ class Input {
     return _controller!.value.text.trim();
   }
 
+  int valueInt() {
+    try {
+      return int.parse(value());
+    } catch (e) {
+      return -1;
+    }
+  }
+
   void setValue(String val) {
     _controller = TextEditingController(text: val);
   }
 
   bool isEmpty() {
-    return _controller!.value.text.trim().isEmpty ? true : false;
+    return value().isEmpty ? true : false;
   }
 }

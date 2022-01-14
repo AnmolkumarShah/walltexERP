@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
-import 'package:walltex_app/Screens/company_selection_screen.dart';
+import 'package:walltex_app/Screens/Initail%20Process/company_selection_screen.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent, // transparent status bar
+  ));
   runApp(const MyApp());
 }
 
@@ -24,7 +28,6 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blueGrey,
         ),
-        // home: const LoginScreen(),
         home: CompanySelectorScreen(),
       ),
     );

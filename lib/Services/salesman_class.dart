@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/Text_check.dart';
-import 'package:walltex_app/Screens/reset_password_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/User%20Related/reset_password_screen.dart';
 import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/control.dart';
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
+import 'package:walltex_app/Helpers/field_cover.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Widgets/lead_tile.dart';
@@ -23,8 +24,21 @@ class _AllLeadsState extends State<AllLeads> {
     {'name': "Sort By Creation Date"},
     {'name': "Sort By Next Followup Date"},
   ];
+  TextEditingController _searchController = TextEditingController(text: "");
 
   String? _selectedExtraOption;
+
+  filterOnText(String val) {
+    List<dynamic> temp = filteredData
+        .where((e) => (e['Name'].toString().contains(val) ||
+            e['Mobile'].toString().toLowerCase().contains(val) ||
+            e['place'].toString().toLowerCase().contains(val) ||
+            e['address'].toString().toLowerCase().contains(val)))
+        .toList();
+    setState(() {
+      filteredData = temp;
+    });
+  }
 
   filterData(String s) {
     switch (s) {
@@ -145,11 +159,25 @@ class _AllLeadsState extends State<AllLeads> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Loader.circular;
           }
-          return ListView.builder(
-            itemCount: filteredData.length,
-            itemBuilder: (context, index) => LeadTile(
-              data: filteredData[index],
-            ),
+          return Column(
+            children: [
+              fieldcover(
+                child: TextFormField(
+                  controller: _searchController,
+                  onChanged: filterOnText,
+                  decoration: InputDecoration(
+                      hintText: "Search By Name,Mobile,Address"),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredData.length,
+                  itemBuilder: (context, index) => LeadTile(
+                    data: filteredData[index],
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),

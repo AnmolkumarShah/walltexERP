@@ -9,6 +9,7 @@ import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
+import 'package:walltex_app/Screens/Lead%20Entry/task_type_all.dart';
 import 'package:walltex_app/Services/Model_Interface.dart';
 import 'package:walltex_app/Services/lead_model.dart';
 import 'package:walltex_app/Services/loader_services.dart';
@@ -98,27 +99,74 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
   final MyDate _dob = MyDate(label: "Select DOB");
 
   bool check() {
-    if (_name.isEmpty() ||
+    if (_dob.isEmpty()) {
+      showSnakeBar(context, "Select A Valid DOB");
+      return false;
+    } else if (_anniv.isEmpty()) {
+      showSnakeBar(context, "Select A Valid Anniversary Date");
+      return false;
+    } else if (_name.isEmpty() ||
         _address.isEmpty() ||
         _place.isEmpty() ||
         _mobile.isEmpty() ||
         _email.isEmpty() ||
-        _anniv.isEmpty() ||
-        _material.isEmpty() ||
-        _remark.isEmpty() ||
-        (_prod1!.isEmpty() &&
-            _prod2!.isEmpty() &&
-            _prod3!.isEmpty() &&
-            _prod4!.isEmpty() &&
-            _prod5!.isEmpty() &&
-            _prod6!.isEmpty()) ||
         _selectedUser!.isEmpty() ||
-        _selectedReference!.isEmpty() ||
-        _dob.isEmpty()) {
+        _selectedReference!.isEmpty()) {
+      showSnakeBar(context, "Enter All Fields Properly");
       return false;
     } else {
       return true;
     }
+  }
+
+  update(User _curUser) async {
+    double? lat;
+    double? lon;
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      lat = position.latitude;
+      lon = position.longitude;
+    } catch (e) {
+      lat = 0.0;
+      lon = 0.0;
+    }
+
+    Lead lead = Lead(
+      sman: _selectedUser!.getId(),
+      address: _address.value(),
+      anniv: formateDate(_anniv.value()),
+      dob: formateDate(_dob.value()),
+      email: _email.value(),
+      lat: lat,
+      log: lon,
+      material: _material.value(),
+      mobile: _mobile.value(),
+      name: _name.value(),
+      place: _place.value(),
+      prod1: _prod1!.value(),
+      prod2: _prod2!.value(),
+      prod3: _prod3!.value(),
+      prod4: _prod4!.value(),
+      prod5: _prod5!.value(),
+      prod6: _prod6!.value(),
+      reffId: _selectedReference!.value(),
+      remark: _remark.value(),
+      leaddate: formateDate(DateTime.now()),
+    );
+    setState(() {
+      loading = true;
+    });
+    dynamic res = await lead.update(widget.madeLead.toString());
+    if (res['value'] == true) {
+      showSnakeBar(context, res['msg']);
+      Navigator.pop(context);
+    } else {
+      showSnakeBar(context, res['msg']);
+    }
+    setState(() {
+      loading = false;
+    });
   }
 
   save(User _curUser) async {
@@ -177,7 +225,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
         loading = false;
       });
     } else {
-      showSnakeBar(context, "Enter All Fields Properly");
+      // showSnakeBar(context, "Enter All Fields Properly");
     }
   }
 
@@ -293,6 +341,21 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
         title: Text(widget.madeLead == null
             ? Control.leadScreen['name'].toString()
             : "Lead Details"),
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TaskTypeAllScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.select_all, color: Colors.white),
+            label:
+                const Text("Task Type", style: TextStyle(color: Colors.white)),
+          )
+        ],
       ),
       body: FutureBuilder(
         future: _fetchData(),
@@ -419,8 +482,9 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                                 onPressed: () => save(_currUser),
                                 child: const Text("Save"),
                               )
-                            : const SizedBox(
-                                width: 0,
+                            : ElevatedButton(
+                                onPressed: () => update(_currUser),
+                                child: const Text("Update"),
                               ),
                   ],
                 ),

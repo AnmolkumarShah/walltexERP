@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:walltex_app/Screens/add_user_screen.dart';
-import 'package:walltex_app/Screens/all_leads_screen.dart';
-import 'package:walltex_app/Screens/anniv_screen.dart';
-import 'package:walltex_app/Screens/birthday_screen.dart';
-import 'package:walltex_app/Screens/followup_type_entry_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/User%20Related/add_user_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/all_leads_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/anniv_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/birthday_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/followup_type_entry_screen.dart';
 import 'package:walltex_app/Screens/gained_lead_screen.dart';
-import 'package:walltex_app/Screens/lead_entry_screen.dart';
+import 'package:walltex_app/Screens/Lead%20Entry/lead_entry_screen.dart';
 import 'package:walltex_app/Screens/lost_lead_screen.dart';
-import 'package:walltex_app/Screens/product_entry_screen.dart';
-import 'package:walltex_app/Screens/references_entry_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/product_entry_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/references_entry_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/task_entry_screen.dart';
 
 class Control {
   static Map<String, Object> leadScreen = {
@@ -54,6 +55,11 @@ class Control {
   static Map<String, Object> followupTypeScreen = {
     "name": "Followup Master",
     "value": const FollowupTypeEntry(),
+  };
+
+  static Map<String, Object> taskTypeScreen = {
+    "name": "TaskType Master",
+    "value": const TaskEntryScreen(),
   };
 
   static Map<String, Object> allLeadScreen = {

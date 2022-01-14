@@ -1,7 +1,7 @@
 import 'package:colorlizer/colorlizer.dart';
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
-import 'package:walltex_app/Screens/lead_entry_screen.dart';
+import 'package:walltex_app/Screens/Lead%20Entry/lead_entry_screen.dart';
 import 'package:walltex_app/Services/text_services.dart';
 
 class LeadTile extends StatefulWidget {

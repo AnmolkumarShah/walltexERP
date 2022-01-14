@@ -82,6 +82,34 @@ class Lead {
     }
   }
 
+  Future update(String id) async {
+    try {
+      final res = await Query.execute(
+        p1: '1',
+        query: """
+        update leads set
+        sman = $sman,Name = '$name',address = '$address',place = '$place',
+        Mobile = '$mobile',email = '$email',dob = '$dob',anniv = '$anniv',
+        product1 =  $prod1,product2 = $prod2,product3 = $prod3,
+        product4 = $prod4,product5 = $prod5,product6 = $prod6,
+        material = '$material',remarks = '$remark',leaddate = '$leaddate',
+        lat = $lat,long = $log,ref = $reffId,nextfollowuprem = '$nextfollowuprem',
+        ordergain = $ordergain,gaindetails = '$gaindetails',orderlost = $orderlost,
+        lostdetails = '$lostdetails'
+        where id = $id
+        """,
+      );
+      print(res);
+      if (res['status'] == 'success') {
+        return {'value': true, 'msg': "Lead Updated Successfully"};
+      } else {
+        throw "Error In Lead saving";
+      }
+    } catch (e) {
+      return {'value': false, 'msg': e.toString()};
+    }
+  }
+
   Future save() async {
     try {
       final res = await Query.execute(

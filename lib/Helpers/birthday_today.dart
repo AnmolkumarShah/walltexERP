@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/phone_call.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/whatsApp.dart';
-import 'package:walltex_app/Screens/birthday_screen.dart';
+import 'package:walltex_app/Screens/MoreOptions/birthday_screen.dart';
 import 'package:walltex_app/control.dart';
 
 import 'date_format_from_data_base.dart';

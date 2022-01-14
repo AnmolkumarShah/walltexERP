@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/phone_call.dart';
 import 'package:walltex_app/Helpers/whatsApp.dart';
-import 'package:walltex_app/Screens/all_followup_screen.dart';
-import 'package:walltex_app/Screens/lead_entry_screen.dart';
-import 'package:walltex_app/Screens/visit_details_screen.dart';
+import 'package:walltex_app/Screens/FollowUp%20Related/all_followup_screen.dart';
+import 'package:walltex_app/Screens/Lead%20Entry/lead_entry_screen.dart';
+import 'package:walltex_app/Screens/FollowUp%20Related/visit_details_screen.dart';
 import 'package:walltex_app/Services/text_services.dart';
 import 'package:walltex_app/Widgets/simple_tile.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
 import 'package:walltex_app/Providers/compony_selector_singleton.dart';
-import 'package:walltex_app/Screens/login_screen.dart';
+import 'package:walltex_app/Screens/Initail%20Process/login_screen.dart';
 
 class CompanySelectorScreen extends StatelessWidget {
   CompanySelectorScreen({Key? key}) : super(key: key);
