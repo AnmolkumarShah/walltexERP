@@ -342,19 +342,22 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
             ? Control.leadScreen['name'].toString()
             : "Lead Details"),
         actions: [
-          TextButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TaskTypeAllScreen(),
-                ),
-              );
-            },
-            icon: const Icon(Icons.select_all, color: Colors.white),
-            label:
-                const Text("Task Type", style: TextStyle(color: Colors.white)),
-          )
+          widget.madeLead != null
+              ? TextButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            TaskTypeAllScreen(leadId: widget.madeLead),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.select_all, color: Colors.white),
+                  label: const Text("Task Type",
+                      style: TextStyle(color: Colors.white)),
+                )
+              : const SizedBox(width: 0)
         ],
       ),
       body: FutureBuilder(

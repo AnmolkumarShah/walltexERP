@@ -6,32 +6,33 @@ class SwitchHelper extends StatefulWidget {
   String? falseLabel;
   bool? preval;
   Function? fun;
+  bool? value;
   SwitchHelper({
     Key? key,
     this.falseLabel,
     this.trueLabel,
     this.preval,
     this.fun,
+    this.value,
   }) : super(key: key);
   @override
   State<SwitchHelper> createState() => _SwitchHelperState();
 }
 
 class _SwitchHelperState extends State<SwitchHelper> {
-  bool value = false;
   @override
   Widget build(BuildContext context) {
     return fieldcover(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(value == true ? widget.trueLabel! : widget.falseLabel!),
+          Text(widget.value == true ? widget.trueLabel! : widget.falseLabel!),
           Switch(
-              value: value,
+              value: widget.value!,
               onChanged: (val) {
                 widget.fun!(val);
                 setState(() {
-                  value = val;
+                  widget.value = val;
                 });
               }),
         ],
@@ -72,6 +73,7 @@ class MySwitch {
       trueLabel: trueLabel,
       preval: _value,
       fun: changeValue,
+      value: _value,
     );
   }
 }

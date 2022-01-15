@@ -7,6 +7,9 @@ class Loader {
   );
 
   static Widget linear = const Center(
-    child: LinearProgressIndicator(),
+    child: Padding(
+      padding: EdgeInsets.all(2.0),
+      child: LinearProgressIndicator(),
+    ),
   );
 }
