@@ -9,8 +9,8 @@ import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
-import 'package:walltex_app/Screens/Lead%20Entry/task_type_all.dart';
 import 'package:walltex_app/Services/Model_Interface.dart';
+import 'package:walltex_app/Screens/Tash%20Related/all_task_screen.dart';
 import 'package:walltex_app/Services/lead_model.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/product_class.dart';
@@ -349,13 +349,13 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            TaskTypeAllScreen(leadId: widget.madeLead),
+                            AllTaskScreen(leadId: widget.madeLead!),
                       ),
                     );
                   },
                   icon: const Icon(Icons.select_all, color: Colors.white),
-                  label: const Text("Task Type",
-                      style: TextStyle(color: Colors.white)),
+                  label:
+                      const Text("Task", style: TextStyle(color: Colors.white)),
                 )
               : const SizedBox(width: 0)
         ],

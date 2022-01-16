@@ -20,7 +20,6 @@ class Query {
     );
     try {
       final url = urlObject.getUrl();
-      print(url);
       var result = await Network.get(url);
       dynamic data;
       try {

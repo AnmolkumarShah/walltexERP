@@ -5,6 +5,8 @@ import 'package:walltex_app/Helpers/whatsApp.dart';
 import 'package:walltex_app/Screens/FollowUp%20Related/all_followup_screen.dart';
 import 'package:walltex_app/Screens/Lead%20Entry/lead_entry_screen.dart';
 import 'package:walltex_app/Screens/FollowUp%20Related/visit_details_screen.dart';
+import 'package:walltex_app/Screens/Tash%20Related/all_task_screen.dart';
+import 'package:walltex_app/Screens/Tash%20Related/new_task_type.dart';
 import 'package:walltex_app/Services/text_services.dart';
 import 'package:walltex_app/Widgets/simple_tile.dart';
 
@@ -92,6 +94,19 @@ class FollowupMenuScreen extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => AllFollowUpScreen(
                           id: data['leadid'],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                SimpleTile(
+                  label: "Show Task",
+                  fun: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AllTaskScreen(
+                          leadId: data['leadid'],
                         ),
                       ),
                     );
