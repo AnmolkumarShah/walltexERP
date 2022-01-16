@@ -15,6 +15,18 @@ class TaskTypeTile extends StatelessWidget {
   }) : super(key: key);
   ColorLizer colorlizer = ColorLizer();
 
+  String status(bool started, bool completed) {
+    if (started == false && completed == false) {
+      return "Not Started";
+    } else if (started == true && completed == false) {
+      return "Pending";
+    } else if (started == true && completed == true) {
+      return "Completed";
+    } else {
+      return "Error";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -49,11 +61,22 @@ class TaskTypeTile extends StatelessWidget {
                   TextHelper.textStyle(data['task'], "Task"),
                 ],
               ),
-              TextHelper.textStyle(data['seqno'].toString(), "Sequence No."),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextHelper.textStyle(
+                      data['seqno'].toString(), "Sequence No."),
+                  TextHelper.textStyle(
+                      status(data['started'], data['completed']), "Status"),
+                ],
+              ),
               TextHelper.textStyle(
                   data['rem'] == null ? "" : data['rem'], "Remark"),
               TextHelper.textStyle(
                   dateFormatFromDataBase(data['allotdt']), "Alloted Dt."),
+              TextHelper.textStyle(
+                  dateFormatFromDataBase(data['complby'].toString()),
+                  "Completed By"),
             ],
           ),
         ),

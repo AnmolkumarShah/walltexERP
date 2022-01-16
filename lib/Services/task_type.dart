@@ -37,9 +37,9 @@ class TaskTypeModel {
   save() async {
     try {
       dynamic result = await Query.execute(p1: '1', query: """
-      insert into tasks(tasktype,leadid,seqno,allotto,allotdt,started,completed,complon,rem)
+      insert into tasks(tasktype,leadid,seqno,allotto,allotdt,started,completed,complon,rem,complby)
       values(${tasktype},${leadid},${seqno},${allotto},'${allotdt}',${started},
-      ${completed},'${complon}','${remark}')
+      ${completed},'${complon}','${remark}','${complby}')
       """);
       print(result);
       if (result['status'] == "success") {
@@ -58,7 +58,7 @@ class TaskTypeModel {
         update tasks set
         tasktype = ${tasktype},leadid = ${leadid},seqno = ${seqno},allotto = ${allotto},
         allotdt = '${allotdt}',started = ${started},
-        completed = ${completed},complon = '${complon}', rem = '${remark}'
+        completed = ${completed},complon = '${complon}', rem = '${remark}',complby = '${complby}'
         where leadid = ${leadid} and seqno = ${seqno}
         """);
       print(result);

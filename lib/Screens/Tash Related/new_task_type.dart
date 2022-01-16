@@ -29,6 +29,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
   User? _selectedUser;
   TaskType? _selectedTaskType;
   final MyDate _taskCompletedBy = MyDate(label: "Complete By");
+  final MyDate _allotedDate = MyDate(label: "Alloted Date");
   final Input _remark = Input(label: "Remark");
   MySwitch? _started;
 
@@ -65,10 +66,21 @@ class _NewTaskTypeState extends State<NewTaskType> {
   getSet() async {
     String usernm = widget.prev!['allotedto'];
     String tasknm = widget.prev!['task'];
-    // String complDate = widget.prev!['complby'];
+
+    try {
+      String complDate = widget.prev!['complby'].toString();
+      String allotDate = widget.prev!['allotdt'].toString();
+      if (complDate == "null" || allotDate == "null") {
+        throw "Error";
+      }
+      _taskCompletedBy.setValue(complDate);
+      _allotedDate.setValue(allotDate);
+    } catch (e) {
+      showSnakeBar(context, "Error In Setting Dates");
+    }
+
     User _sUser = _users!.firstWhere((e) => e.getName() == usernm);
     TaskType _sTaskType = _tasktypeList!.firstWhere((e) => e.show() == tasknm);
-    // _taskCompletedBy.setValue(complDate);
     int seqNo = widget.prev!['seqno'];
     String rem = widget.prev!['rem'] == null ? "" : widget.prev!['rem'];
     _remark.setValue(rem);
@@ -119,12 +131,28 @@ class _NewTaskTypeState extends State<NewTaskType> {
       showSnakeBar(context, "Select A Type First");
       return;
     }
+
+    if (_allotedDate.isEmpty()) {
+      showSnakeBar(context, "Please Select Date Of Allotment");
+      return;
+    }
+
+    if (_taskCompletedBy.isEmpty()) {
+      showSnakeBar(
+          context, "Please Select Date When This Task Should Be Completed");
+      return;
+    }
+    if (_started!.getValue() == false && _compleated!.getValue() == true) {
+      showSnakeBar(context,
+          "Task is not started and yet competed, please check this !!!");
+      return;
+    }
     setState(() {
       _loading = true;
     });
     TaskTypeModel temp = TaskTypeModel(
       tasktype: _selectedTaskType!.getId(),
-      allotdt: formateDate(DateTime.now()),
+      allotdt: formateDate(_allotedDate.value()),
       allotto: _selectedUser!.getId(),
       completed: _compleated!.getIntVal(),
       complon: formateDate(DateTime(1900)),
@@ -132,10 +160,10 @@ class _NewTaskTypeState extends State<NewTaskType> {
       seqno: _sequenceNumber,
       started: _started!.getIntVal(),
       remark: _remark.value(),
+      complby: formateDate(_taskCompletedBy.value()),
     );
 
     bool result = await temp.save();
-    print(result);
     if (result == true) {
       showSnakeBar(context, "Saved Successfully");
     } else {
@@ -157,20 +185,37 @@ class _NewTaskTypeState extends State<NewTaskType> {
       showSnakeBar(context, "Select A Type First");
       return;
     }
+
+    if (_allotedDate.isEmpty()) {
+      showSnakeBar(context, "Please Select Date Of Allotment");
+      return;
+    }
+
+    if (_taskCompletedBy.isEmpty()) {
+      showSnakeBar(
+          context, "Please Select Date When This Task Should Be Completed");
+      return;
+    }
+
+    if (_started!.getValue() == false && _compleated!.getValue() == true) {
+      showSnakeBar(context,
+          "Task is not started and yet competed, please check this !!!");
+      return;
+    }
     setState(() {
       _loading = true;
     });
     TaskTypeModel temp = TaskTypeModel(
       tasktype: _selectedTaskType!.getId(),
-      allotdt: formateDate(DateTime.now()),
+      allotdt: formateDate(_allotedDate.value()),
       allotto: _selectedUser!.getId(),
       completed: _compleated!.getIntVal(),
       complon: formateDate(DateTime(1900)),
       leadid: widget.leadId,
       seqno: _sequenceNumber,
       started: _started!.getIntVal(),
-      taskid: 0, // just to enter
       remark: _remark.value(),
+      complby: formateDate(_taskCompletedBy.value()),
     );
 
     bool result = await temp.update();
@@ -196,7 +241,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Loader.circular;
           }
-          return Center(
+          return SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -230,10 +275,11 @@ class _NewTaskTypeState extends State<NewTaskType> {
                   },
                   label: "Task Type",
                 ).build(),
-                // _taskCompletedBy.builder(),
+                _allotedDate.builder(),
+                _taskCompletedBy.builder(),
                 _remark.builder(),
-                // _started!.builder(),
-                // _compleated!.builder(),
+                _started!.builder(),
+                _compleated!.builder(),
                 _loading == true
                     ? Loader.circular
                     : widget.prev == null
