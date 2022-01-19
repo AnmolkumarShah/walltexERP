@@ -7,6 +7,8 @@ class SwitchHelper extends StatefulWidget {
   bool? preval;
   Function? fun;
   bool? value;
+
+  bool? enable;
   SwitchHelper({
     Key? key,
     this.falseLabel,
@@ -14,6 +16,7 @@ class SwitchHelper extends StatefulWidget {
     this.preval,
     this.fun,
     this.value,
+    this.enable,
   }) : super(key: key);
   @override
   State<SwitchHelper> createState() => _SwitchHelperState();
@@ -22,19 +25,23 @@ class SwitchHelper extends StatefulWidget {
 class _SwitchHelperState extends State<SwitchHelper> {
   @override
   Widget build(BuildContext context) {
+    print(widget.enable);
     return fieldcover(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(widget.value == true ? widget.trueLabel! : widget.falseLabel!),
           Switch(
-              value: widget.value!,
-              onChanged: (val) {
-                widget.fun!(val);
-                setState(() {
-                  widget.value = val;
-                });
-              }),
+            value: widget.value!,
+            onChanged: widget.enable == true
+                ? (val) {
+                    widget.fun!(val);
+                    setState(() {
+                      widget.value = val;
+                    });
+                  }
+                : null,
+          ),
         ],
       ),
     );
@@ -45,10 +52,13 @@ class MySwitch {
   bool? _value = false;
   String? trueLabel;
   String? falseLabel;
-  MySwitch({bool? val, String? tv, String? fv}) {
+  bool? enable = true;
+
+  MySwitch({bool? val, String? tv, String? fv, bool? en = true}) {
     _value = val;
     trueLabel = tv;
     falseLabel = fv;
+    enable = en;
   }
 
   bool getValue() {
@@ -67,6 +77,10 @@ class MySwitch {
     _value = v;
   }
 
+  disable() {
+    enable = false;
+  }
+
   Widget builder() {
     return SwitchHelper(
       falseLabel: falseLabel,
@@ -74,6 +88,7 @@ class MySwitch {
       preval: _value,
       fun: changeValue,
       value: _value,
+      enable: enable,
     );
   }
 }

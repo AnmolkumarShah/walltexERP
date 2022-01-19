@@ -14,8 +14,10 @@ class Dropdown<T> {
   List<T>? items;
   Function? fun;
   String? label;
+  bool? enable;
 
-  Dropdown({this.items, this.fun, this.selected, this.label});
+  Dropdown(
+      {this.items, this.fun, this.selected, this.label, this.enable = true});
 
   List<DropdownMenuItem<T>> buildItems(List<T>? li) {
     List<DropdownMenuItem<T>>? list = li!
@@ -27,6 +29,10 @@ class Dropdown<T> {
             ))
         .toList();
     return list;
+  }
+
+  void disable() {
+    enable = false;
   }
 
   Widget build() {
@@ -44,10 +50,12 @@ class Dropdown<T> {
           DropdownButtonHideUnderline(
             child: DropdownButton<T>(
               items: buildItems(items),
-              onChanged: (value) {
-                selected = value;
-                fun!(value);
-              },
+              onChanged: enable == true
+                  ? (value) {
+                      selected = value;
+                      fun!(value);
+                    }
+                  : null,
               value: selected,
             ),
           ),

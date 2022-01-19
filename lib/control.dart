@@ -14,7 +14,7 @@ import 'package:walltex_app/Screens/MoreOptions/task_entry_screen.dart';
 class Control {
   static Map<String, Object> leadScreen = {
     "name": "Lead Entry",
-    "value": LeadEntryScreen(),
+    "value": LeadEntryScreen(taskShow: true),
   };
 
   static Map<String, Object> addUserScreen = {
@@ -80,7 +80,7 @@ class Control {
   }
 
   static TextStyle eventStyle = TextStyle(
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.bold,
     fontSize: 15,
   );
 

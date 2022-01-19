@@ -46,6 +46,7 @@ class _AllTaskScreenState extends State<AllTaskScreen> {
               return TaskTypeTile(
                 data: data[index],
                 refresh: refresh,
+                enable: true,
               );
             },
           );
@@ -58,6 +59,7 @@ class _AllTaskScreenState extends State<AllTaskScreen> {
             MaterialPageRoute(
               builder: (context) => NewTaskType(
                 leadId: widget.leadId,
+                enable: true,
               ),
             ),
           );

@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:walltex_app/Helpers/birthday_today.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
+import 'package:walltex_app/Screens/Initail%20Process/login_screen.dart';
+import 'package:walltex_app/Screens/Tash%20Related/assigned_task.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/Widgets/followup_tile.dart';
@@ -57,6 +59,26 @@ class _DashboardState extends State<Dashboard> {
     User? currentUser =
         Provider.of<ControlProvider>(context, listen: false).getUser();
     return Scaffold(
+      drawer: Drawer(
+        child: Column(
+          children: [
+            const Spacer(),
+            ListTile(
+              leading: const Icon(Icons.exit_to_app),
+              title: const Text("Logout Of Application"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: const Text("Dashboard"),
         elevation: 0,
@@ -95,6 +117,7 @@ class _DashboardState extends State<Dashboard> {
       body: Column(
         children: [
           BirthDayToday(id: currentUser.getId()),
+          AssignedTask(),
           Container(
             color: Theme.of(context).primaryColor,
             padding: const EdgeInsets.all(10),

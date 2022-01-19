@@ -44,6 +44,7 @@ class _LeadTileState extends State<LeadTile> {
           MaterialPageRoute(
             builder: (context) => LeadEntryScreen(
               madeLead: widget.data['id'],
+              taskShow: true,
             ),
           ),
         );

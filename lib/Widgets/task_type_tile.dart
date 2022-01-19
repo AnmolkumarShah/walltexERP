@@ -8,10 +8,12 @@ import 'package:walltex_app/control.dart';
 class TaskTypeTile extends StatelessWidget {
   dynamic data;
   Function? refresh;
+  bool? enable = true;
   TaskTypeTile({
     Key? key,
     this.data,
     this.refresh,
+    this.enable,
   }) : super(key: key);
   ColorLizer colorlizer = ColorLizer();
 
@@ -37,6 +39,7 @@ class TaskTypeTile extends StatelessWidget {
             builder: (context) => NewTaskType(
               leadId: data['leadid'],
               prev: data,
+              enable: enable,
             ),
           ),
         );
@@ -73,9 +76,14 @@ class TaskTypeTile extends StatelessWidget {
               TextHelper.textStyle(
                   data['rem'] == null ? "" : data['rem'], "Remark"),
               TextHelper.textStyle(
-                  dateFormatFromDataBase(data['allotdt']), "Alloted Dt."),
+                  onlyDateFromDataBase(data['allotdt']) == DateTime(1900)
+                      ? "Not Alloted"
+                      : dateFormatFromDataBase(data['allotdt']),
+                  "Alloted Dt."),
               TextHelper.textStyle(
-                  dateFormatFromDataBase(data['complby'].toString()),
+                  onlyDateFromDataBase(data['allotdt']) == DateTime(1900)
+                      ? "Not Alloted"
+                      : dateFormatFromDataBase(data['complby'].toString()),
                   "Completed By"),
             ],
           ),

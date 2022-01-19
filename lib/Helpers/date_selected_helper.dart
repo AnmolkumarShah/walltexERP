@@ -8,7 +8,8 @@ class DateHelper extends StatefulWidget {
   Function? fun;
   String? label;
   DateTime? givenDate;
-  DateHelper({Key? key, this.fun, this.label, this.givenDate})
+  bool? enable = true;
+  DateHelper({Key? key, this.fun, this.label, this.givenDate, this.enable})
       : super(key: key);
 
   @override
@@ -37,16 +38,19 @@ class _DateHelperState extends State<DateHelper> {
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text(widget.label!),
                 Text(DateFormat.yMMMMEEEEd().format(_selectedDate!)),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedDate = null;
-                    });
-                    widget.fun!(null);
-                  },
-                  icon: const Icon(Icons.cancel),
-                ),
+                widget.enable == true
+                    ? IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedDate = null;
+                          });
+                          widget.fun!(null);
+                        },
+                        icon: const Icon(Icons.cancel),
+                      )
+                    : const SizedBox(width: 0),
               ],
             )
           : Row(
@@ -77,8 +81,9 @@ class _DateHelperState extends State<DateHelper> {
 class MyDate {
   DateTime? _value;
   String? label;
+  bool? enable;
 
-  MyDate({this.label = 'Select Date'});
+  MyDate({this.label = 'Select Date', this.enable = true});
 
   changeDate(DateTime? d) {
     _value = d;
@@ -93,8 +98,16 @@ class MyDate {
     _value = date;
   }
 
+  setDate(DateTime date) {
+    _value = date;
+  }
+
   bool isEmpty() {
     return _value == null ? true : false;
+  }
+
+  void disable() {
+    enable = false;
   }
 
   Widget builder() {
@@ -102,6 +115,7 @@ class MyDate {
       fun: changeDate,
       label: label,
       givenDate: _value,
+      enable: enable,
     );
   }
 }

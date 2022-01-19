@@ -6,6 +6,7 @@ import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/switch_helper.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
+import 'package:walltex_app/Screens/Lead%20Entry/lead_entry_screen.dart';
 import 'package:walltex_app/Services/task_class.dart';
 import 'package:walltex_app/Services/task_type.dart';
 import 'package:walltex_app/Services/user_class.dart';
@@ -15,7 +16,9 @@ import '../../Services/loader_services.dart';
 class NewTaskType extends StatefulWidget {
   int? leadId;
   Map<String, dynamic>? prev;
-  NewTaskType({Key? key, this.leadId, this.prev}) : super(key: key);
+  bool? enable = true;
+  NewTaskType({Key? key, this.leadId, this.prev, this.enable})
+      : super(key: key);
 
   @override
   State<NewTaskType> createState() => _NewTaskTypeState();
@@ -93,11 +96,22 @@ class _NewTaskTypeState extends State<NewTaskType> {
             ? false
             : true;
 
+    if (widget.enable == false) {
+      _remark.disable();
+      _allotedDate.disable();
+      _taskCompletedBy.disable();
+    }
+
     setState(() {
       _selectedUser = _sUser;
       _selectedTaskType = _sTaskType;
       _sequenceNumber = seqNo;
-      _started = MySwitch(tv: "Started", fv: "Not Started", val: starVal);
+      _started = MySwitch(
+        tv: "Started",
+        fv: "Not Started",
+        val: starVal,
+        en: widget.enable,
+      );
       _compleated =
           MySwitch(tv: "Completed", fv: "Not Completed", val: compVal);
     });
@@ -132,35 +146,20 @@ class _NewTaskTypeState extends State<NewTaskType> {
       return;
     }
 
-    if (_allotedDate.isEmpty()) {
-      showSnakeBar(context, "Please Select Date Of Allotment");
-      return;
-    }
-
-    if (_taskCompletedBy.isEmpty()) {
-      showSnakeBar(
-          context, "Please Select Date When This Task Should Be Completed");
-      return;
-    }
-    if (_started!.getValue() == false && _compleated!.getValue() == true) {
-      showSnakeBar(context,
-          "Task is not started and yet competed, please check this !!!");
-      return;
-    }
     setState(() {
       _loading = true;
     });
     TaskTypeModel temp = TaskTypeModel(
       tasktype: _selectedTaskType!.getId(),
-      allotdt: formateDate(_allotedDate.value()),
+      allotdt: formateDate(DateTime(1900)),
       allotto: _selectedUser!.getId(),
-      completed: _compleated!.getIntVal(),
+      completed: 0,
       complon: formateDate(DateTime(1900)),
       leadid: widget.leadId,
       seqno: _sequenceNumber,
-      started: _started!.getIntVal(),
+      started: 0,
       remark: _remark.value(),
-      complby: formateDate(_taskCompletedBy.value()),
+      complby: formateDate(DateTime(1900)),
     );
 
     bool result = await temp.save();
@@ -210,15 +209,31 @@ class _NewTaskTypeState extends State<NewTaskType> {
       allotdt: formateDate(_allotedDate.value()),
       allotto: _selectedUser!.getId(),
       completed: _compleated!.getIntVal(),
-      complon: formateDate(DateTime(1900)),
+      complon: formateDate(
+        _compleated!.getIntVal() == true ? DateTime.now() : DateTime(1900),
+      ),
       leadid: widget.leadId,
       seqno: _sequenceNumber,
       started: _started!.getIntVal(),
       remark: _remark.value(),
       complby: formateDate(_taskCompletedBy.value()),
+      taskid: widget.prev!['taskid'],
     );
 
     bool result = await temp.update();
+
+    if (result == true) {
+      showSnakeBar(context, "Updated Successfully");
+    } else {
+      showSnakeBar(context, "Error In Updating");
+    }
+
+    if (temp.completed == 1) {
+      String res = await TaskTypeModel.markNextTaskStart(
+          temp.leadid, temp.taskid, temp.seqno);
+      showSnakeBar(context, res);
+    }
+
     if (result == true) {
       showSnakeBar(context, "Updated Successfully");
     } else {
@@ -264,22 +279,44 @@ class _NewTaskTypeState extends State<NewTaskType> {
                     });
                   },
                   label: "Assigned To",
+                  enable: widget.enable,
                 ).build(),
                 Dropdown<TaskType>(
                   selected: _selectedTaskType,
                   items: _tasktypeList,
+                  enable: widget.enable,
                   fun: (val) {
                     setState(() {
                       _selectedTaskType = val;
+                      if (widget.prev != null) {
+                        int days = (val as TaskType).days!;
+                        try {
+                          _taskCompletedBy.setDate(
+                              _allotedDate.value().add(Duration(days: days)));
+                        } catch (e) {
+                          _taskCompletedBy.setDate(
+                              DateTime.now().add(Duration(days: days)));
+                        }
+                        showSnakeBar(context,
+                            "Complete Date Set $days Days From Allotment Date");
+                      }
                     });
                   },
                   label: "Task Type",
                 ).build(),
-                _allotedDate.builder(),
-                _taskCompletedBy.builder(),
-                _remark.builder(),
-                _started!.builder(),
-                _compleated!.builder(),
+                widget.prev != null
+                    ? Column(
+                        children: [
+                          _allotedDate.builder(),
+                          _taskCompletedBy.builder(),
+                          _remark.builder(),
+                          _started!.builder(),
+                          _started!.getValue() == true
+                              ? _compleated!.builder()
+                              : const SizedBox(height: 0),
+                        ],
+                      )
+                    : const SizedBox(height: 0),
                 _loading == true
                     ? Loader.circular
                     : widget.prev == null
@@ -291,6 +328,20 @@ class _NewTaskTypeState extends State<NewTaskType> {
                             onPressed: update,
                             child: const Text("Update"),
                           ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LeadEntryScreen(
+                          madeLead: widget.leadId,
+                          taskShow: false,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text("Show Lead Detail"),
+                )
               ],
             ),
           );

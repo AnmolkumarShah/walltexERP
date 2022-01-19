@@ -8,16 +8,19 @@ class TextFormHelper extends StatelessWidget {
     this.obscure,
     this.controller,
     this.type,
+    this.enable,
   }) : super(key: key);
 
   final String? label;
   final TextEditingController? controller;
   final bool? obscure;
   final TextInputType? type;
+  final bool? enable;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: enable,
       controller: controller,
       obscureText: obscure!,
       keyboardType: type,
@@ -33,6 +36,7 @@ class Input {
   String? _label;
   TextInputType? _inputType;
   bool? _obscure;
+  bool? enable = true;
 
   Input({String? label = "Placeholder"}) {
     _controller = TextEditingController(text: "");
@@ -76,8 +80,13 @@ class Input {
         controller: _controller,
         obscure: _obscure,
         type: _inputType,
+        enable: enable,
       ),
     );
+  }
+
+  void disable() {
+    enable = false;
   }
 
   String value() {

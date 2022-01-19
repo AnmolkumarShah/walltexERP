@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/phone_call.dart';
 import 'package:walltex_app/Helpers/whatsApp.dart';
+import 'package:walltex_app/Providers/control_provider.dart';
 import 'package:walltex_app/Screens/FollowUp%20Related/all_followup_screen.dart';
 import 'package:walltex_app/Screens/Lead%20Entry/lead_entry_screen.dart';
 import 'package:walltex_app/Screens/FollowUp%20Related/visit_details_screen.dart';
 import 'package:walltex_app/Screens/Tash%20Related/all_task_screen.dart';
-import 'package:walltex_app/Screens/Tash%20Related/new_task_type.dart';
 import 'package:walltex_app/Services/text_services.dart';
+import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/Widgets/simple_tile.dart';
 
 class FollowupMenuScreen extends StatelessWidget {
@@ -16,6 +18,8 @@ class FollowupMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? currentUser =
+        Provider.of<ControlProvider>(context, listen: false).getUser();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Followup Menu"),
@@ -99,19 +103,21 @@ class FollowupMenuScreen extends StatelessWidget {
                     );
                   },
                 ),
-                SimpleTile(
-                  label: "Show Task",
-                  fun: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AllTaskScreen(
-                          leadId: data['leadid'],
+                if (currentUser.isAdmin() == true)
+                  SimpleTile(
+                    label: "Show Task",
+                    fun: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AllTaskScreen(
+                            leadId: data['leadid'],
+                            
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  ),
               ],
             ),
           ),

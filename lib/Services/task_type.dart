@@ -34,6 +34,30 @@ class TaskTypeModel {
     return result[0]['Column1'] + 1;
   }
 
+  static Future<String> markNextTaskStart(
+      int? leadId, int? taskId, int? taskSeq) async {
+    List<dynamic> result = await Query.execute(query: """
+      select * from tasks where leadid = $leadId and seqno > $taskSeq
+      """, toPrint: true);
+    if (result.isNotEmpty) {
+      int idOfNextTAsk = result.first['taskid'];
+      dynamic startedResult = await Query.execute(
+          p1: '1',
+          query: """
+                  update tasks set started = 1 where  
+                  leadid = $leadId and taskid = $idOfNextTAsk
+                """,
+          toPrint: true);
+      if (startedResult['status'] == "success") {
+        return "Next Task Marked As Started";
+      } else {
+        return "Error In Marking Next Task As Started";
+      }
+    } else {
+      return "All Task In This Lead Are Completed";
+    }
+  }
+
   save() async {
     try {
       dynamic result = await Query.execute(p1: '1', query: """
@@ -61,7 +85,6 @@ class TaskTypeModel {
         completed = ${completed},complon = '${complon}', rem = '${remark}',complby = '${complby}'
         where leadid = ${leadid} and seqno = ${seqno}
         """);
-      print(result);
       if (result['status'] == "success") {
         return true;
       } else {

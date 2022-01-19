@@ -75,17 +75,16 @@ openwhatsapp(BuildContext context, String text, String number) async {
     } else {
       // android , web
       if (await canLaunch(whatsappURlAndroid)) {
-        await launch(whatsappURlAndroid);
+        await launch(whatappURLIos);
         showSnakeBar(context, "Thanks");
       } else if (defaultTargetPlatform != TargetPlatform.android) {
-        await launch(whatsappURlAndroid);
+        // await launch(whatsappURlAndroid);
         await launch(whatappURLIos, forceSafariVC: false);
       } else {
         showSnakeBar(context, "Whatsapp Not Installed");
       }
     }
   } catch (e) {
-    print("Anmol " + e.toString());
     showSnakeBar(context, e.toString());
   }
 }

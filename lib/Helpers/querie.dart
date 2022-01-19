@@ -13,7 +13,8 @@ class Query {
   static const allTaskType = "select * from tasktype ";
 
   // method for all  query language commands
-  static Future execute({String? query, String? p1 = '0'}) async {
+  static Future execute(
+      {String? query, String? p1 = '0', bool toPrint = false}) async {
     final UrlGlobal urlObject = UrlGlobal(
       p2: query!,
       p1: p1!,

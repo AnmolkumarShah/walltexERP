@@ -21,7 +21,8 @@ import 'package:walltex_app/control.dart';
 
 class LeadEntryScreen extends StatefulWidget {
   int? madeLead;
-  LeadEntryScreen({Key? key, this.madeLead}) : super(key: key);
+  bool? taskShow = true;
+  LeadEntryScreen({Key? key, this.madeLead, this.taskShow}) : super(key: key);
 
   @override
   State<LeadEntryScreen> createState() => _LeadEntryScreenState();
@@ -342,7 +343,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
             ? Control.leadScreen['name'].toString()
             : "Lead Details"),
         actions: [
-          widget.madeLead != null
+          widget.madeLead != null && widget.taskShow == true
               ? TextButton.icon(
                   onPressed: () {
                     Navigator.push(
@@ -480,15 +481,17 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                     _remark.builder(),
                     loading == true
                         ? Loader.circular
-                        : widget.madeLead == null
-                            ? ElevatedButton(
-                                onPressed: () => save(_currUser),
-                                child: const Text("Save"),
-                              )
-                            : ElevatedButton(
-                                onPressed: () => update(_currUser),
-                                child: const Text("Update"),
-                              ),
+                        : widget.taskShow == true
+                            ? (widget.madeLead == null
+                                ? ElevatedButton(
+                                    onPressed: () => save(_currUser),
+                                    child: const Text("Save"),
+                                  )
+                                : ElevatedButton(
+                                    onPressed: () => update(_currUser),
+                                    child: const Text("Update"),
+                                  ))
+                            : const SizedBox(height: 0),
                   ],
                 ),
                 loading == true
