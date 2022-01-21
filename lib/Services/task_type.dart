@@ -1,3 +1,4 @@
+import 'package:walltex_app/Helpers/format_date.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 
 class TaskTypeModel {
@@ -42,12 +43,14 @@ class TaskTypeModel {
     if (result.isNotEmpty) {
       int idOfNextTAsk = result.first['taskid'];
       dynamic startedResult = await Query.execute(
-          p1: '1',
-          query: """
-                  update tasks set started = 1 where  
+        p1: '1',
+        query: """
+                  update tasks set started = 1,allotdt = '${formateDate(DateTime.now())}' where  
                   leadid = $leadId and taskid = $idOfNextTAsk
                 """,
-          toPrint: true);
+        toPrint: true,
+      );
+      print(startedResult);
       if (startedResult['status'] == "success") {
         return "Next Task Marked As Started";
       } else {

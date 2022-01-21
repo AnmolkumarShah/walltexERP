@@ -6,6 +6,7 @@ import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/switch_helper.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
+import 'package:walltex_app/Helpers/whatsApp.dart';
 import 'package:walltex_app/Screens/Lead%20Entry/lead_entry_screen.dart';
 import 'package:walltex_app/Services/task_class.dart';
 import 'package:walltex_app/Services/task_type.dart';
@@ -67,6 +68,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
   }
 
   getSet() async {
+    // print(widget.prev);
     String usernm = widget.prev!['allotedto'];
     String tasknm = widget.prev!['task'];
 
@@ -97,7 +99,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
             : true;
 
     if (widget.enable == false) {
-      _remark.disable();
+      // _remark.disable();
       _allotedDate.disable();
       _taskCompletedBy.disable();
     }
@@ -110,7 +112,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
         tv: "Started",
         fv: "Not Started",
         val: starVal,
-        en: widget.enable,
+        en: starVal == true ? false : widget.enable,
       );
       _compleated =
           MySwitch(tv: "Completed", fv: "Not Completed", val: compVal);
@@ -216,7 +218,9 @@ class _NewTaskTypeState extends State<NewTaskType> {
       seqno: _sequenceNumber,
       started: _started!.getIntVal(),
       remark: _remark.value(),
-      complby: formateDate(_taskCompletedBy.value()),
+      complby: formateDate(_compleated!.getIntVal() == 1
+          ? DateTime.now()
+          : _taskCompletedBy.value()),
       taskid: widget.prev!['taskid'],
     );
 
@@ -231,6 +235,9 @@ class _NewTaskTypeState extends State<NewTaskType> {
     if (temp.completed == 1) {
       String res = await TaskTypeModel.markNextTaskStart(
           temp.leadid, temp.taskid, temp.seqno);
+      String msgText =
+          "Task ${widget.prev!['seqno']} of lead - ${widget.prev!['leadname']} is completed";
+      await openwhatsapp(context, msgText, widget.prev!['leadnumber']);
       showSnakeBar(context, res);
     }
 
@@ -263,7 +270,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Text(
-                    "Task Number #$_sequenceNumber",
+                    "Task Number #$_sequenceNumber ${(widget.prev == null || widget.prev!['leadname'] == null) ? "" : "of ${widget.prev!['leadname']}"}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,

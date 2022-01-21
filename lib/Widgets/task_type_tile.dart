@@ -75,16 +75,18 @@ class TaskTypeTile extends StatelessWidget {
               ),
               TextHelper.textStyle(
                   data['rem'] == null ? "" : data['rem'], "Remark"),
+              if (data['leadname'] != null)
+                TextHelper.textStyle(data['leadname'], "LeadName"),
               TextHelper.textStyle(
                   onlyDateFromDataBase(data['allotdt']) == DateTime(1900)
                       ? "Not Alloted"
                       : dateFormatFromDataBase(data['allotdt']),
                   "Alloted Dt."),
-              TextHelper.textStyle(
-                  onlyDateFromDataBase(data['allotdt']) == DateTime(1900)
-                      ? "Not Alloted"
-                      : dateFormatFromDataBase(data['complby'].toString()),
-                  "Completed By"),
+              // TextHelper.textStyle(
+              //     onlyDateFromDataBase(data['allotdt']) == DateTime(1900)
+              //         ? "Not Alloted"
+              //         : dateFormatFromDataBase(data['complby'].toString()),
+              //     "Completed By"),
             ],
           ),
         ),

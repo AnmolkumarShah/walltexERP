@@ -20,27 +20,17 @@ class _AssignedTaskState extends State<AssignedTask> {
       enableDrag: true,
       context: context,
       builder: (context) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.9,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Chip(label: Text("Your Task")),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return TaskTypeTile(
-                      data: data[index],
-                      refresh: refresh,
-                      enable: false,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
+        return TabView(data: data);
+        // return SizedBox(
+        //   height: MediaQuery.of(context).size.height * 0.9,
+        //   child: Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     children: [
+        //       Chip(label: Text("Your Task")),
+
+        //     ],
+        //   ),
+        // );
       },
     );
   }
@@ -57,6 +47,8 @@ class _AssignedTaskState extends State<AssignedTask> {
       future: Query.execute(query: """
       select  t.taskid, t.tasktype,t.leadid,t.seqno, t.allotdt,t.started,
       t.complby,t.completed,t.complon,t.rem,t.allotto,
+      (select Name from leads where id = t.leadid ) as leadname,
+      (select Mobile from leads where id = t.leadid ) as leadnumber,
       (select usr_nm from usr_mast where id = t.allotto)  as allotedto,
       (select task from tasktype where tasktype = t.tasktype) as 
       task from tasks t where t.allotto  = ${currentUser.getId()} 
@@ -94,6 +86,76 @@ class _AssignedTaskState extends State<AssignedTask> {
           ),
         );
       },
+    );
+  }
+}
+
+class TabView extends StatelessWidget {
+  List<dynamic>? pending;
+  List<dynamic>? notStarted;
+  List<dynamic>? completed;
+  TabView({required List<dynamic>? data}) {
+    this.pending = data!
+        .where((e) => (e['started'] == true && e['completed'] == false))
+        .toList();
+    this.notStarted = data
+        .where((e) => (e['started'] == false && e['completed'] == false))
+        .toList();
+    this.completed = data
+        .where((e) => (e['started'] == true && e['completed'] == true))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Your Assigned Task"),
+          bottom: TabBar(
+            tabs: [
+              Text("Not Started"),
+              Text("Pending"),
+              Text("Completed"),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            ListView.builder(
+              itemCount: notStarted!.length,
+              itemBuilder: (context, index) {
+                return TaskTypeTile(
+                  data: notStarted![index],
+                  refresh: () {},
+                  enable: false,
+                );
+              },
+            ),
+            ListView.builder(
+              itemCount: pending!.length,
+              itemBuilder: (context, index) {
+                return TaskTypeTile(
+                  data: pending![index],
+                  refresh: () {},
+                  enable: false,
+                );
+              },
+            ),
+            ListView.builder(
+              itemCount: completed!.length,
+              itemBuilder: (context, index) {
+                return TaskTypeTile(
+                  data: completed![index],
+                  refresh: () {},
+                  enable: false,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
