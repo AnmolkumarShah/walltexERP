@@ -1,7 +1,7 @@
 import 'package:colorlizer/colorlizer.dart';
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
-import 'package:walltex_app/Screens/Tash%20Related/new_task_type.dart';
+import 'package:walltex_app/Screens/Task%20Related/new_task_type.dart';
 import 'package:walltex_app/Services/text_services.dart';
 import 'package:walltex_app/control.dart';
 
@@ -9,11 +9,13 @@ class TaskTypeTile extends StatelessWidget {
   dynamic data;
   Function? refresh;
   bool? enable = true;
+  bool? showCompl;
   TaskTypeTile({
     Key? key,
     this.data,
     this.refresh,
     this.enable,
+    this.showCompl = false,
   }) : super(key: key);
   ColorLizer colorlizer = ColorLizer();
 
@@ -31,6 +33,7 @@ class TaskTypeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(data);
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
@@ -82,11 +85,10 @@ class TaskTypeTile extends StatelessWidget {
                       ? "Not Alloted"
                       : dateFormatFromDataBase(data['allotdt']),
                   "Alloted Dt."),
-              // TextHelper.textStyle(
-              //     onlyDateFromDataBase(data['allotdt']) == DateTime(1900)
-              //         ? "Not Alloted"
-              //         : dateFormatFromDataBase(data['complby'].toString()),
-              //     "Completed By"),
+              if (showCompl == true)
+                TextHelper.textStyle(
+                    dateFormatFromDataBase(data['complon'].toString()),
+                    "Completed On"),
             ],
           ),
         ),

@@ -20,7 +20,7 @@ class _AssignedTaskState extends State<AssignedTask> {
       enableDrag: true,
       context: context,
       builder: (context) {
-        return TabView(data: data);
+        return TabView(data: data, refresh: refresh);
         // return SizedBox(
         //   height: MediaQuery.of(context).size.height * 0.9,
         //   child: Column(
@@ -37,6 +37,7 @@ class _AssignedTaskState extends State<AssignedTask> {
 
   refresh() {
     setState(() {});
+    Navigator.pop(context);
   }
 
   @override
@@ -70,6 +71,12 @@ class _AssignedTaskState extends State<AssignedTask> {
             child: Chip(label: Text("No Task Found")),
           );
         }
+        int pending_count = 0;
+        data.forEach((e) {
+          if ((e['started'] == true && e['completed'] == false)) {
+            pending_count += 1;
+          }
+        });
         return GestureDetector(
           onTap: () => showModel(context, data),
           child: Container(
@@ -79,7 +86,7 @@ class _AssignedTaskState extends State<AssignedTask> {
               color: Colors.amber,
             ),
             child: Text(
-              "You Have Been Assigned To ${data.length} Task\nClick To View Them All",
+              "You Have ${pending_count} Pending Task\nClick To View Them All",
               textAlign: TextAlign.center,
               style: Control.eventStyle,
             ),
@@ -94,7 +101,8 @@ class TabView extends StatelessWidget {
   List<dynamic>? pending;
   List<dynamic>? notStarted;
   List<dynamic>? completed;
-  TabView({required List<dynamic>? data}) {
+  Function refresh;
+  TabView({required List<dynamic>? data, required this.refresh}) {
     this.pending = data!
         .where((e) => (e['started'] == true && e['completed'] == false))
         .toList();
@@ -115,8 +123,8 @@ class TabView extends StatelessWidget {
           title: Text("Your Assigned Task"),
           bottom: TabBar(
             tabs: [
-              Text("Not Started"),
               Text("Pending"),
+              Text("Not Started"),
               Text("Completed"),
             ],
           ),
@@ -124,21 +132,21 @@ class TabView extends StatelessWidget {
         body: TabBarView(
           children: [
             ListView.builder(
-              itemCount: notStarted!.length,
+              itemCount: pending!.length,
               itemBuilder: (context, index) {
                 return TaskTypeTile(
-                  data: notStarted![index],
-                  refresh: () {},
+                  data: pending![index],
+                  refresh: refresh,
                   enable: false,
                 );
               },
             ),
             ListView.builder(
-              itemCount: pending!.length,
+              itemCount: notStarted!.length,
               itemBuilder: (context, index) {
                 return TaskTypeTile(
-                  data: pending![index],
-                  refresh: () {},
+                  data: notStarted![index],
+                  refresh: refresh,
                   enable: false,
                 );
               },
@@ -148,8 +156,9 @@ class TabView extends StatelessWidget {
               itemBuilder: (context, index) {
                 return TaskTypeTile(
                   data: completed![index],
-                  refresh: () {},
+                  refresh: refresh,
                   enable: false,
+                  showCompl: true,
                 );
               },
             ),

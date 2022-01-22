@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/field_cover.dart';
 import 'package:walltex_app/Helpers/querie.dart';
@@ -28,16 +29,15 @@ class _AllLeadsState extends State<AllLeads> {
 
   String? _selectedExtraOption;
 
-  filterOnText(String val) {
-    List<dynamic> temp = filteredData
-        .where((e) => (e['Name'].toString().contains(val) ||
-            e['Mobile'].toString().toLowerCase().contains(val) ||
-            e['place'].toString().toLowerCase().contains(val) ||
-            e['address'].toString().toLowerCase().contains(val)))
+  List<dynamic> filterOnText(String val) {
+    String value = val.trim().toLowerCase();
+    print(value);
+    List<dynamic> temp = data
+        .where((e) =>
+            (e['Name'].toString().trim().toLowerCase().contains(value) ||
+                e['Mobile'].toString().trim().contains(value)))
         .toList();
-    setState(() {
-      filteredData = temp;
-    });
+    return temp;
   }
 
   filterData(String s) {
@@ -161,12 +161,25 @@ class _AllLeadsState extends State<AllLeads> {
           }
           return Column(
             children: [
-              fieldcover(
-                child: TextFormField(
-                  controller: _searchController,
-                  onChanged: filterOnText,
-                  decoration: InputDecoration(
-                      hintText: "Search By Name,Mobile,Address"),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TypeAheadField(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    autofocus: false,
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .copyWith(fontStyle: FontStyle.italic),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Search By Name And Mob. Number"),
+                  ),
+                  suggestionsCallback: (pattern) async {
+                    return filterOnText(pattern);
+                  },
+                  itemBuilder: (context, suggestion) {
+                    return LeadTile(data: suggestion);
+                  },
+                  onSuggestionSelected: (suggestion) {},
                 ),
               ),
               Expanded(

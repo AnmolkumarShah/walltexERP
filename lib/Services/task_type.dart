@@ -50,7 +50,6 @@ class TaskTypeModel {
                 """,
         toPrint: true,
       );
-      print(startedResult);
       if (startedResult['status'] == "success") {
         return "Next Task Marked As Started";
       } else {

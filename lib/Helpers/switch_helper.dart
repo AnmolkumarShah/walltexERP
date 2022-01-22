@@ -25,7 +25,7 @@ class SwitchHelper extends StatefulWidget {
 class _SwitchHelperState extends State<SwitchHelper> {
   @override
   Widget build(BuildContext context) {
-    print(widget.enable);
+    // print(widget.enable);
     return fieldcover(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,7 +52,7 @@ class MySwitch {
   bool? _value = false;
   String? trueLabel;
   String? falseLabel;
-  bool? enable = true;
+  bool? enable;
 
   MySwitch({bool? val, String? tv, String? fv, bool? en = true}) {
     _value = val;

@@ -4,7 +4,7 @@ import 'package:walltex_app/Helpers/birthday_today.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
 import 'package:walltex_app/Screens/Initail%20Process/login_screen.dart';
-import 'package:walltex_app/Screens/Tash%20Related/assigned_task.dart';
+import 'package:walltex_app/Screens/Task%20Related/assigned_task.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/Widgets/followup_tile.dart';
@@ -18,14 +18,14 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-fetchFollowUp(int id) async {
+fetchFollowUp(int id, {required bool isAdmin}) async {
   String query = """
   select a.id,b.Name, b.place,b.mobile,b.remarks,
   c.usr_nm as SalesMan, a.nextdate,a.nextrem ,a.leadid
   from followup a
   left join leads b on a.leadid = b.id
   left join usr_mast c on a.sman = c.id
-  where a.isdone  = 0 and a.nextdate <= getdate() and a.sman = $id
+  where a.isdone  = 0 and a.nextdate <= getdate() ${isAdmin == true ? "" : "and a.sman = $id"} 
   order by a.id desc
   """;
   try {
@@ -151,7 +151,8 @@ class _DashboardState extends State<Dashboard> {
             child: RefreshIndicator(
               onRefresh: () => refresh(),
               child: FutureBuilder(
-                future: fetchFollowUp(currentUser.getId()),
+                future: fetchFollowUp(currentUser.getId(),
+                    isAdmin: currentUser.isAdmin()),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Loader.circular;

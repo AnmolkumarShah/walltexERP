@@ -89,6 +89,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
     int seqNo = widget.prev!['seqno'];
     String rem = widget.prev!['rem'] == null ? "" : widget.prev!['rem'];
     _remark.setValue(rem);
+
     bool compVal = (widget.prev!['completed'] == null ||
             widget.prev!['completed'] == false)
         ? false
@@ -114,8 +115,12 @@ class _NewTaskTypeState extends State<NewTaskType> {
         val: starVal,
         en: starVal == true ? false : widget.enable,
       );
-      _compleated =
-          MySwitch(tv: "Completed", fv: "Not Completed", val: compVal);
+      _compleated = MySwitch(
+        tv: "Completed",
+        fv: "Not Completed",
+        val: compVal,
+        en: compVal == true ? false : true,
+      );
     });
   }
 
@@ -208,11 +213,13 @@ class _NewTaskTypeState extends State<NewTaskType> {
     });
     TaskTypeModel temp = TaskTypeModel(
       tasktype: _selectedTaskType!.getId(),
-      allotdt: formateDate(_allotedDate.value()),
+      allotdt: formateDate(_allotedDate.value().year == DateTime(1900).year
+          ? DateTime.now()
+          : _allotedDate.value()),
       allotto: _selectedUser!.getId(),
       completed: _compleated!.getIntVal(),
       complon: formateDate(
-        _compleated!.getIntVal() == true ? DateTime.now() : DateTime(1900),
+        _compleated!.getValue() == true ? DateTime.now() : DateTime(1900),
       ),
       leadid: widget.leadId,
       seqno: _sequenceNumber,
@@ -315,7 +322,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
                     ? Column(
                         children: [
                           _allotedDate.builder(),
-                          _taskCompletedBy.builder(),
+                          // _taskCompletedBy.builder(),
                           _remark.builder(),
                           _started!.builder(),
                           _started!.getValue() == true

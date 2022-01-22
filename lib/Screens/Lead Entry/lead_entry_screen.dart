@@ -10,7 +10,6 @@ import 'package:walltex_app/Helpers/show_snakebar.dart';
 import 'package:walltex_app/Helpers/text_form_field_helper.dart';
 import 'package:walltex_app/Providers/control_provider.dart';
 import 'package:walltex_app/Services/Model_Interface.dart';
-import 'package:walltex_app/Screens/Tash%20Related/all_task_screen.dart';
 import 'package:walltex_app/Services/lead_model.dart';
 import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/product_class.dart';
@@ -342,24 +341,24 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
         title: Text(widget.madeLead == null
             ? Control.leadScreen['name'].toString()
             : "Lead Details"),
-        actions: [
-          widget.madeLead != null && widget.taskShow == true
-              ? TextButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            AllTaskScreen(leadId: widget.madeLead!),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.select_all, color: Colors.white),
-                  label:
-                      const Text("Task", style: TextStyle(color: Colors.white)),
-                )
-              : const SizedBox(width: 0)
-        ],
+        // actions: [
+        //   widget.madeLead != null && widget.taskShow == true
+        //       ? TextButton.icon(
+        //           onPressed: () {
+        //             Navigator.push(
+        //               context,
+        //               MaterialPageRoute(
+        //                 builder: (context) =>
+        //                     AllTaskScreen(leadId: widget.madeLead!),
+        //               ),
+        //             );
+        //           },
+        //           icon: const Icon(Icons.select_all, color: Colors.white),
+        //           label:
+        //               const Text("Task", style: TextStyle(color: Colors.white)),
+        //         )
+        //       : const SizedBox(width: 0)
+        // ],
       ),
       body: FutureBuilder(
         future: _fetchData(),

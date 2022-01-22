@@ -1,7 +1,7 @@
 import 'package:colorlizer/colorlizer.dart';
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
-import 'package:walltex_app/Screens/Lead%20Entry/lead_entry_screen.dart';
+import 'package:walltex_app/Screens/FollowUp%20Related/followup_menu_screen.dart';
 import 'package:walltex_app/Services/text_services.dart';
 
 class LeadTile extends StatefulWidget {
@@ -42,9 +42,12 @@ class _LeadTileState extends State<LeadTile> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LeadEntryScreen(
-              madeLead: widget.data['id'],
-              taskShow: true,
+            builder: (context) => FollowupMenuScreen(
+              all: false,
+              data: {
+                'leadid': widget.data['id'],
+                'mobile': widget.data['Mobile']
+              },
             ),
           ),
         );
