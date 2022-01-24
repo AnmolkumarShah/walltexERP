@@ -21,6 +21,7 @@ class FollowupMenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     User? currentUser =
         Provider.of<ControlProvider>(context, listen: false).getUser();
+    print(data);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Followup Menu"),
@@ -29,7 +30,7 @@ class FollowupMenuScreen extends StatelessWidget {
         children: [
           if (all == true)
             Hero(
-              tag: data['id'],
+              tag: data['id'].toString(),
               child: Container(
                 height: 120,
                 margin: EdgeInsets.all(10),
