@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 String dateFormat(DateTime dt) {
-  return DateFormat.yMMMEd().format(dt);
+  return DateFormat.yMMMMEEEEd().add_jms().format(dt);
 }
 
 String dateFormatFromDataBase(String value) {

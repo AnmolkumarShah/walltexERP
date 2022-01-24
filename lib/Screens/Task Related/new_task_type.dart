@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/date_selected_helper.dart';
 import 'package:walltex_app/Helpers/drop_down_helper.dart';
+import 'package:walltex_app/Helpers/field_cover.dart';
 import 'package:walltex_app/Helpers/format_date.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Helpers/show_snakebar.dart';
@@ -32,8 +35,8 @@ class _NewTaskTypeState extends State<NewTaskType> {
 
   User? _selectedUser;
   TaskType? _selectedTaskType;
-  final MyDate _taskCompletedBy = MyDate(label: "Complete By");
-  final MyDate _allotedDate = MyDate(label: "Alloted Date");
+  final MyDate _taskCompletedBy = MyDate(label: "Complete By", dateTime: true);
+  final MyDate _allotedDate = MyDate(label: "Alloted Date", dateTime: true);
   final Input _remark = Input(label: "Remark");
   MySwitch? _started;
 
@@ -260,6 +263,37 @@ class _NewTaskTypeState extends State<NewTaskType> {
     Navigator.pop(context);
   }
 
+  onlyComplete() {
+    Duration duration = onlyDateFromDataBase(widget.prev!['complon'])
+        .difference(_allotedDate.value());
+    int hours = duration.inHours;
+    int days = (hours / 24).ceil();
+    int rem_hour = (hours % 24);
+    return Column(
+      children: [
+        fieldcover(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Completed On"),
+            Text(
+              DateFormat.yMd('en_US')
+                  .add_jms()
+                  .format(onlyDateFromDataBase(widget.prev!['complon'])),
+            )
+          ],
+        )),
+        Text(
+          "Time Taken $days days and $rem_hour hours",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -322,7 +356,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
                     ? Column(
                         children: [
                           _allotedDate.builder(),
-                          // _taskCompletedBy.builder(),
+                          _taskCompletedBy.builder(),
                           _remark.builder(),
                           _started!.builder(),
                           _started!.getValue() == true
@@ -331,6 +365,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
                         ],
                       )
                     : const SizedBox(height: 0),
+                if (_compleated!.getValue() == true) onlyComplete(),
                 _loading == true
                     ? Loader.circular
                     : widget.prev == null

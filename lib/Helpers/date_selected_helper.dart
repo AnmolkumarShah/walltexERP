@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/field_cover.dart';
@@ -9,7 +10,14 @@ class DateHelper extends StatefulWidget {
   String? label;
   DateTime? givenDate;
   bool? enable = true;
-  DateHelper({Key? key, this.fun, this.label, this.givenDate, this.enable})
+  bool? dateTime;
+  DateHelper(
+      {Key? key,
+      this.fun,
+      this.label,
+      this.givenDate,
+      this.enable,
+      this.dateTime = false})
       : super(key: key);
 
   @override
@@ -39,7 +47,7 @@ class _DateHelperState extends State<DateHelper> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(widget.label!),
-                Text(DateFormat.yMMMMEEEEd().format(_selectedDate!)),
+                Text(DateFormat.yMd('en_US').add_jms().format(_selectedDate!)),
                 widget.enable == true
                     ? IconButton(
                         onPressed: () {
@@ -58,18 +66,33 @@ class _DateHelperState extends State<DateHelper> {
               children: [
                 Text(widget.label!),
                 IconButton(
-                  onPressed: () async {
-                    final DateTime? val = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime(2050),
-                    );
-                    setState(() {
-                      _selectedDate = val;
-                    });
-                    widget.fun!(val);
-                  },
+                  onPressed: widget.dateTime == true
+                      ? () async {
+                          DatePicker.showDateTimePicker(context,
+                              showTitleActions: true,
+                              minTime: DateTime(2000, 1, 1),
+                              maxTime: DateTime(2050, 12, 1),
+                              onChanged: (date) {}, onConfirm: (date) {
+                            setState(() {
+                              _selectedDate = date;
+                            });
+                            widget.fun!(date);
+                          },
+                              currentTime: DateTime.now(),
+                              locale: LocaleType.en);
+                        }
+                      : () async {
+                          final DateTime? val = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime(2050),
+                          );
+                          setState(() {
+                            _selectedDate = val;
+                          });
+                          widget.fun!(val);
+                        },
                   icon: const Icon(Icons.calendar_today_outlined),
                 ),
               ],
@@ -82,8 +105,10 @@ class MyDate {
   DateTime? _value;
   String? label;
   bool? enable;
+  bool? dateTime;
 
-  MyDate({this.label = 'Select Date', this.enable = true});
+  MyDate(
+      {this.label = 'Select Date', this.enable = true, this.dateTime = false});
 
   changeDate(DateTime? d) {
     _value = d;
@@ -116,6 +141,7 @@ class MyDate {
       label: label,
       givenDate: _value,
       enable: enable,
+      dateTime: dateTime,
     );
   }
 }
