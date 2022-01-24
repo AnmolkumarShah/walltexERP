@@ -35,7 +35,8 @@ class _NewTaskTypeState extends State<NewTaskType> {
 
   User? _selectedUser;
   TaskType? _selectedTaskType;
-  final MyDate _taskCompletedBy = MyDate(label: "Complete By", dateTime: true);
+  final MyDate _taskCompletedBy =
+      MyDate(label: "To Complete By", dateTime: true);
   final MyDate _allotedDate = MyDate(label: "Alloted Date", dateTime: true);
   final Input _remark = Input(label: "Remark");
   MySwitch? _started;
@@ -159,9 +160,14 @@ class _NewTaskTypeState extends State<NewTaskType> {
     setState(() {
       _loading = true;
     });
+    int byDays = _selectedTaskType!.getId() != -1
+        ? _tasktypeList!
+            .firstWhere((e) => e.getId() == _selectedTaskType!.getId())
+            .days!
+        : 0;
     TaskTypeModel temp = TaskTypeModel(
       tasktype: _selectedTaskType!.getId(),
-      allotdt: formateDate(DateTime(1900)),
+      allotdt: formateDate(DateTime.now()),
       allotto: _selectedUser!.getId(),
       completed: 0,
       complon: formateDate(DateTime(1900)),
@@ -169,7 +175,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
       seqno: _sequenceNumber,
       started: 0,
       remark: _remark.value(),
-      complby: formateDate(DateTime(1900)),
+      complby: formateDate(DateTime.now().add(Duration(days: byDays))),
     );
 
     bool result = await temp.save();
@@ -214,6 +220,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
     setState(() {
       _loading = true;
     });
+
     TaskTypeModel temp = TaskTypeModel(
       tasktype: _selectedTaskType!.getId(),
       allotdt: formateDate(_allotedDate.value().year == DateTime(1900).year
@@ -242,13 +249,17 @@ class _NewTaskTypeState extends State<NewTaskType> {
       showSnakeBar(context, "Error In Updating");
     }
 
-    if (temp.completed == 1) {
-      String res = await TaskTypeModel.markNextTaskStart(
-          temp.leadid, temp.taskid, temp.seqno);
-      String msgText =
-          "Task ${widget.prev!['seqno']} of lead - ${widget.prev!['leadname']} is completed";
-      await openwhatsapp(context, msgText, widget.prev!['leadnumber']);
-      showSnakeBar(context, res);
+    try {
+      if (temp.completed == 1) {
+        String res = await TaskTypeModel.markNextTaskStart(
+            temp.leadid, temp.taskid, temp.seqno);
+        String msgText =
+            "Task ${widget.prev!['seqno']} of lead - ${widget.prev!['leadname']} is completed";
+        await openwhatsapp(context, msgText, widget.prev!['leadnumber']);
+        showSnakeBar(context, res);
+      }
+    } catch (e) {
+      showSnakeBar(context, "Error IN Sending Message");
     }
 
     if (result == true) {
@@ -283,13 +294,15 @@ class _NewTaskTypeState extends State<NewTaskType> {
             )
           ],
         )),
-        Text(
-          "Time Taken $days days and $rem_hour hours",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
+        days >= 0
+            ? Text(
+                "Time Taken $days days and $rem_hour hours",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              )
+            : const Text(""),
       ],
     );
   }

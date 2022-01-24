@@ -25,9 +25,12 @@ class _AllTaskScreenState extends State<AllTaskScreen> {
       body: FutureBuilder(
         future: Query.execute(query: """
             select  t.taskid, t.tasktype,t.leadid,t.seqno, t.allotdt,t.started,
-            t.complby,t.completed,t.complon,t.rem,(select usr_nm from usr_mast 
-            where id = t.allotto)  as allotedto,(select task from tasktype where 
-            tasktype = t.tasktype) as task from tasks t where t.leadid  = ${widget.leadId}
+            t.complby,t.completed,t.complon,t.rem,
+            (select Name from leads where id = t.leadid ) as leadname,
+            (select Mobile from leads where id = t.leadid ) as leadnumber,
+            (select usr_nm from usr_mast where id = t.allotto)  as allotedto,
+            (select task from tasktype where tasktype = t.tasktype) as task from tasks t 
+            where t.leadid  = ${widget.leadId}
             order by t.seqno
             """),
         builder: (context, snapshot) {

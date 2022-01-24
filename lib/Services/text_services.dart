@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 
 class TextHelper {
   static textStyle(String text, String label) {
-    return Text(
-      "$label : $text",
-      style: const TextStyle(
-        color: Colors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: 15,
-      ),
+    return Wrap(
+      children: [
+        Text(label + " : "),
+        const SizedBox(width: 10),
+        Text(
+          text,
+          textAlign: TextAlign.justify,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            fontSize: 15,
+          ),
+        ),
+      ],
     );
   }
 }

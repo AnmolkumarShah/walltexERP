@@ -19,7 +19,6 @@ class FollowupMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(data);
     User? currentUser =
         Provider.of<ControlProvider>(context, listen: false).getUser();
     return Scaffold(

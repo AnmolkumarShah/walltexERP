@@ -33,7 +33,6 @@ class TaskTypeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(data);
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
@@ -80,12 +79,19 @@ class TaskTypeTile extends StatelessWidget {
                   data['rem'] == null ? "" : data['rem'], "Remark"),
               if (data['leadname'] != null)
                 TextHelper.textStyle(data['leadname'], "LeadName"),
+              const Divider(color: Colors.grey, thickness: 2),
               TextHelper.textStyle(
                   onlyDateFromDataBase(data['allotdt']) == DateTime(1900)
                       ? "Not Alloted"
                       : dateFormatFromDataBase(data['allotdt']),
                   "Alloted Dt."),
-              if (showCompl == true)
+              if (onlyDateFromDataBase(data['complby'].toString()) !=
+                  DateTime(1900))
+                TextHelper.textStyle(
+                    dateFormatFromDataBase(data['complby'].toString()),
+                    "To Completed By"),
+              if (onlyDateFromDataBase(data['complon'].toString()) !=
+                  DateTime(1900))
                 TextHelper.textStyle(
                     dateFormatFromDataBase(data['complon'].toString()),
                     "Completed On"),

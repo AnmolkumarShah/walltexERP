@@ -20,7 +20,7 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnakeBar(
           ),
         ],
       ),
-      duration: const Duration(milliseconds: 4000),
+      duration: const Duration(milliseconds: 1000),
       backgroundColor: Theme.of(context).colorScheme.primary,
       padding: const EdgeInsets.symmetric(
         horizontal: 8.0,

@@ -117,7 +117,7 @@ class _DashboardState extends State<Dashboard> {
       body: Column(
         children: [
           BirthDayToday(id: currentUser.getId()),
-          AssignedTask(),
+          AssignedTask(isAll: currentUser.isAdmin()),
           Container(
             color: Theme.of(context).primaryColor,
             padding: const EdgeInsets.all(10),
@@ -172,6 +172,7 @@ class _DashboardState extends State<Dashboard> {
                     itemCount: data.length,
                     itemBuilder: (context, index) => FollowupTile(
                       data: data[index],
+                      refresh: refresh,
                     ),
                   );
                 },

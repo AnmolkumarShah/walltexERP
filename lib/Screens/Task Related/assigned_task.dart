@@ -8,7 +8,8 @@ import 'package:walltex_app/Widgets/task_type_tile.dart';
 import 'package:walltex_app/control.dart';
 
 class AssignedTask extends StatefulWidget {
-  const AssignedTask({Key? key}) : super(key: key);
+  final bool isAll;
+  const AssignedTask({Key? key, this.isAll = false}) : super(key: key);
 
   @override
   State<AssignedTask> createState() => _AssignedTaskState();
@@ -52,13 +53,13 @@ class _AssignedTaskState extends State<AssignedTask> {
       (select Mobile from leads where id = t.leadid ) as leadnumber,
       (select usr_nm from usr_mast where id = t.allotto)  as allotedto,
       (select task from tasktype where tasktype = t.tasktype) as 
-      task from tasks t where t.allotto  = ${currentUser.getId()} 
+      task from tasks t  ${widget.isAll == false ? "where t.allotto  = ${currentUser.getId()}" : ""}  
       order by t.leadid,t.seqno
       """),
       builder: (context, snapshot) {
-        if (currentUser.isAdmin()) {
-          return const SizedBox(height: 0);
-        }
+        // if (currentUser.isAdmin()) {
+        //   return const SizedBox(height: 0);
+        // }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Loader.linear;
         }

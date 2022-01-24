@@ -7,17 +7,19 @@ import 'package:walltex_app/control.dart';
 
 class FollowupTile extends StatelessWidget {
   dynamic data;
+  Function? refresh;
   FollowupTile({
     Key? key,
     this.data,
+    this.refresh,
   }) : super(key: key);
   ColorLizer colorlizer = ColorLizer();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => FollowupMenuScreen(
@@ -25,6 +27,7 @@ class FollowupTile extends StatelessWidget {
             ),
           ),
         );
+        refresh!();
       },
       child: Hero(
         tag: data['id'],
