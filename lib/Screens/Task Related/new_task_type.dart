@@ -175,7 +175,8 @@ class _NewTaskTypeState extends State<NewTaskType> {
       seqno: _sequenceNumber,
       started: 0,
       remark: _remark.value(),
-      complby: formateDate(DateTime.now().add(Duration(days: byDays))),
+      complby: byDays
+          .toString(), // taking this as after days to mark complete by date
     );
 
     bool result = await temp.save();
@@ -217,6 +218,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
           "Task is not started and yet competed, please check this !!!");
       return;
     }
+
     setState(() {
       _loading = true;
     });
@@ -235,9 +237,7 @@ class _NewTaskTypeState extends State<NewTaskType> {
       seqno: _sequenceNumber,
       started: _started!.getIntVal(),
       remark: _remark.value(),
-      complby: formateDate(_compleated!.getIntVal() == 1
-          ? DateTime.now()
-          : _taskCompletedBy.value()),
+      complby: formateDate(_taskCompletedBy.value()),
       taskid: widget.prev!['taskid'],
     );
 
@@ -249,10 +249,16 @@ class _NewTaskTypeState extends State<NewTaskType> {
       showSnakeBar(context, "Error In Updating");
     }
 
+    int byDays = _selectedTaskType!.getId() != -1
+        ? _tasktypeList!
+            .firstWhere((e) => e.getId() == _selectedTaskType!.getId())
+            .days!
+        : 0;
+
     try {
       if (temp.completed == 1) {
         String res = await TaskTypeModel.markNextTaskStart(
-            temp.leadid, temp.taskid, temp.seqno);
+            temp.leadid, temp.taskid, temp.seqno,byDays);
         String msgText =
             "Task ${widget.prev!['seqno']} of lead - ${widget.prev!['leadname']} is completed";
         await openwhatsapp(context, msgText, widget.prev!['leadnumber']);

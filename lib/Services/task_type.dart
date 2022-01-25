@@ -1,3 +1,4 @@
+import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/format_date.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 
@@ -36,7 +37,7 @@ class TaskTypeModel {
   }
 
   static Future<String> markNextTaskStart(
-      int? leadId, int? taskId, int? taskSeq) async {
+      int? leadId, int? taskId, int? taskSeq, int? byDays) async {
     List<dynamic> result = await Query.execute(query: """
       select * from tasks where leadid = $leadId and seqno > $taskSeq
       """, toPrint: true);
@@ -45,7 +46,8 @@ class TaskTypeModel {
       dynamic startedResult = await Query.execute(
         p1: '1',
         query: """
-                  update tasks set started = 1,allotdt = '${formateDate(DateTime.now())}' where  
+                  update tasks set started = 1,allotdt = '${formateDate(DateTime.now())}',
+                  complby = '${formateDate(DateTime.now().add(Duration(days: byDays!)))}' where  
                   leadid = $leadId and taskid = $idOfNextTAsk
                 """,
         toPrint: true,
@@ -60,7 +62,32 @@ class TaskTypeModel {
     }
   }
 
+  checkPreviousTask(String completeByDays) async {
+    DateTime lastDate = DateTime.now();
+    try {
+      List<dynamic> result = await Query.execute(query: """
+      select complby from tasks where leadid = ${this.leadid} and seqno < ${this.seqno}
+      order by seqno
+      """, toPrint: true);
+
+      if (result.isNotEmpty) {
+        lastDate = onlyDateFromDataBase(result.last['complby']);
+      } else {
+        lastDate = DateTime.now();
+      }
+
+      this.allotdt = formateDate(lastDate);
+      this.complby =
+          formateDate(lastDate.add(Duration(days: int.parse(completeByDays))));
+    } catch (e) {
+      this.allotdt = formateDate(lastDate);
+      this.complby =
+          formateDate(lastDate.add(Duration(days: int.parse(completeByDays))));
+    }
+  }
+
   save() async {
+    await this.checkPreviousTask(this.complby!);
     try {
       dynamic result = await Query.execute(p1: '1', query: """
       insert into tasks(tasktype,leadid,seqno,allotto,allotdt,started,completed,complon,rem,complby)
