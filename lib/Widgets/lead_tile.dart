@@ -1,7 +1,9 @@
 import 'package:colorlizer/colorlizer.dart';
 import 'package:flutter/material.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
+import 'package:walltex_app/Helpers/querie.dart';
 import 'package:walltex_app/Screens/FollowUp%20Related/followup_menu_screen.dart';
+import 'package:walltex_app/Services/loader_services.dart';
 import 'package:walltex_app/Services/text_services.dart';
 
 class LeadTile extends StatefulWidget {
@@ -74,8 +76,29 @@ class _LeadTileState extends State<LeadTile> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextHelper.textStyle(widget.data['Mobile'], "Mobile"),
-                  TextHelper.textStyle(
-                      widget.data['sman'].toString(), "Assigned To"),
+                  FutureBuilder(
+                    future: Query.execute(
+                        query:
+                            "select usr_nm from usr_mast where id = ${widget.data['sman']}"),
+                    builder: (context, snapshot) {
+                      List<dynamic> data;
+                      try {
+                        data = snapshot.data as List<dynamic>;
+                      } catch (e) {
+                        data = [
+                          {'usr_nm': "Loading"}
+                        ];
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Loader.circular;
+                      }
+                      if (snapshot.hasError) {
+                        return const Text("Error");
+                      }
+                      return TextHelper.textStyle(
+                          data[0]['usr_nm'], "Assigned To");
+                    },
+                  ),
                 ],
               ),
               widget.data['nextfollowupon'] == null

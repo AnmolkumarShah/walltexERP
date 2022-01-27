@@ -99,7 +99,6 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
   final MyDate _dob = MyDate(label: "Select DOB");
 
   bool check() {
-    print(_dob.value());
     if (_dob.isEmpty()) {
       showSnakeBar(context, "Select A Valid DOB");
       return false;

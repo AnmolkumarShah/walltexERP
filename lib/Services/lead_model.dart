@@ -63,7 +63,8 @@ class Lead {
   Future getId(Lead lead) async {
     try {
       dynamic res = await Query.execute(query: """
-      select id from leads where Name = '${lead.name}' and address = '${lead.address}' and place = '${lead.place}'
+      select id from leads where Name = '${lead.name}' and address = '${lead.address}' and place = '${lead.place}' 
+      order by id desc
       """);
       return res[0]['id'];
     } catch (e) {

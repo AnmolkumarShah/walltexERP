@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:walltex_app/Helpers/completed_in_time.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Helpers/date_selected_helper.dart';
 import 'package:walltex_app/Helpers/drop_down_helper.dart';
@@ -258,10 +259,11 @@ class _NewTaskTypeState extends State<NewTaskType> {
     try {
       if (temp.completed == 1) {
         String res = await TaskTypeModel.markNextTaskStart(
-            temp.leadid, temp.taskid, temp.seqno,byDays);
+            temp.leadid, temp.taskid, temp.seqno, byDays);
         String msgText =
             "Task ${widget.prev!['seqno']} of lead - ${widget.prev!['leadname']} is completed";
-        await openwhatsapp(context, msgText, widget.prev!['leadnumber']);
+        // await openwhatsapp(context, msgText, widget.prev!['leadnumber']);
+        await openwhatsapp(context, msgText, widget.prev!['allotedByNumber']);
         showSnakeBar(context, res);
       }
     } catch (e) {
@@ -281,11 +283,8 @@ class _NewTaskTypeState extends State<NewTaskType> {
   }
 
   onlyComplete() {
-    Duration duration = onlyDateFromDataBase(widget.prev!['complon'])
-        .difference(_allotedDate.value());
-    int hours = duration.inHours;
-    int days = (hours / 24).ceil();
-    int rem_hour = (hours % 24);
+    String res = completedInTime(
+        onlyDateFromDataBase(widget.prev!['complon']), _allotedDate.value());
     return Column(
       children: [
         fieldcover(
@@ -300,15 +299,13 @@ class _NewTaskTypeState extends State<NewTaskType> {
             )
           ],
         )),
-        days >= 0
-            ? Text(
-                "Time Taken $days days and $rem_hour hours",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              )
-            : const Text(""),
+        Text(
+          res,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        )
       ],
     );
   }

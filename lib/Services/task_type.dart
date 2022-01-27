@@ -66,12 +66,18 @@ class TaskTypeModel {
     DateTime lastDate = DateTime.now();
     try {
       List<dynamic> result = await Query.execute(query: """
-      select complby from tasks where leadid = ${this.leadid} and seqno < ${this.seqno}
+      select complby,completed from tasks where leadid = ${this.leadid} and seqno < ${this.seqno}
       order by seqno
       """, toPrint: true);
 
+      print(result);
+
       if (result.isNotEmpty) {
-        lastDate = onlyDateFromDataBase(result.last['complby']);
+        if (result.last['completed'] == true) {
+          lastDate = onlyDateFromDataBase(result.last['complon']);
+        } else {
+          lastDate = onlyDateFromDataBase(result.last['complby']);
+        }
       } else {
         lastDate = DateTime.now();
       }

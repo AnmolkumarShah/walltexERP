@@ -20,6 +20,9 @@ class _AllTaskScreenState extends State<AllTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("**********************");
+    print(widget.leadId);
+    print("**********************");
     return Scaffold(
       appBar: AppBar(title: const Text("All Task")),
       body: FutureBuilder(
@@ -28,6 +31,7 @@ class _AllTaskScreenState extends State<AllTaskScreen> {
             t.complby,t.completed,t.complon,t.rem,
             (select Name from leads where id = t.leadid ) as leadname,
             (select Mobile from leads where id = t.leadid ) as leadnumber,
+            (select mobile from usr_mast where id = (select sman from leads where id = t.leadid) ) as allotedByNumber,
             (select usr_nm from usr_mast where id = t.allotto)  as allotedto,
             (select task from tasktype where tasktype = t.tasktype) as task from tasks t 
             where t.leadid  = ${widget.leadId}

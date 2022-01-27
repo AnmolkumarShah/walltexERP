@@ -10,18 +10,31 @@ class Admin extends User {
   bool? blk;
   bool? adm = false;
   int? id;
+  String? number;
+  String? email;
   Admin({
     String? name,
     String? pass,
     bool? blok,
+    String? numb,
+    String? mail,
     bool? adim = false,
     int? ids = -1,
-  }) : super(nm: name, pwd: pass, adm: adim, blk: blok, ids: ids) {
+  }) : super(
+            nm: name,
+            pwd: pass,
+            adm: adim,
+            blk: blok,
+            ids: ids,
+            num: numb,
+            mail: mail) {
     nm = name;
     pwd = pass;
     blk = blok;
     adm = adim;
     id = ids;
+    number = numb;
+    email = mail;
   }
 
   bool? isblock() {
@@ -49,20 +62,44 @@ class Admin extends User {
               isblock == true ? Colors.redAccent : Colors.amber[100],
           title: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                Text(
-                  "Name : " + nm!,
-                  style: const TextStyle(
-                    // fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Name : " + nm!,
+                      style: const TextStyle(
+                        // fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                    ),
+                  ],
                 ),
-                // Text(
-                //   "Id  : " + .toString(),
-                //   style: const TextStyle(fontWeight: FontWeight.bold),
-                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Email : " + email!,
+                      style: const TextStyle(
+                        // fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Mobile : " + number!,
+                      style: const TextStyle(
+                        // fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

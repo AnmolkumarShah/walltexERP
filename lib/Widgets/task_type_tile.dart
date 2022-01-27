@@ -1,5 +1,6 @@
 import 'package:colorlizer/colorlizer.dart';
 import 'package:flutter/material.dart';
+import 'package:walltex_app/Helpers/completed_in_time.dart';
 import 'package:walltex_app/Helpers/date_format_from_data_base.dart';
 import 'package:walltex_app/Screens/Task%20Related/new_task_type.dart';
 import 'package:walltex_app/Services/text_services.dart';
@@ -89,12 +90,22 @@ class TaskTypeTile extends StatelessWidget {
                   DateTime(1900))
                 TextHelper.textStyle(
                     dateFormatFromDataBase(data['complby'].toString()),
-                    "To Completed By"),
+                    "To Complete By"),
               if (onlyDateFromDataBase(data['complon'].toString()) !=
                   DateTime(1900))
                 TextHelper.textStyle(
                     dateFormatFromDataBase(data['complon'].toString()),
                     "Completed On"),
+              if (onlyDateFromDataBase(data['complon'].toString()) !=
+                  DateTime(1900))
+                Text(
+                  completedInTime(
+                      onlyDateFromDataBase(data['complon'].toString()),
+                      onlyDateFromDataBase(data['allotdt'])),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
             ],
           ),
         ),

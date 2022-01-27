@@ -18,10 +18,26 @@ class _AddUserState extends State<AddUser> {
 
   final Input _name = Input(label: "Username");
   final Input _password = Input(label: "Password");
+  final Input _mobileNumber = Input(label: "Mobile Number");
+  final Input _email = Input(label: "Email");
 
   Future save() async {
-    if (_name.value() == '' || _password.value() == "") {
-      showSnakeBar(context, "Enter Name And Password");
+    if (_name.value() == '') {
+      showSnakeBar(context, "Enter User Name");
+      return;
+    }
+    if (_mobileNumber.value() == "") {
+      showSnakeBar(context, "Enter User Mobile Number");
+      return;
+    }
+
+    if (_email.value() == "") {
+      showSnakeBar(context, "Enter User Email");
+      return;
+    }
+
+    if (_password.value() == "") {
+      showSnakeBar(context, "Enter User Password");
       return;
     }
     setState(() {
@@ -31,6 +47,8 @@ class _AddUserState extends State<AddUser> {
     User? user = User(
       nm: _name.value(),
       pwd: _password.value(),
+      num: _mobileNumber.value(),
+      mail: _email.value(),
     );
 
     dynamic res = await user.save();
@@ -104,6 +122,8 @@ class _AddUserState extends State<AddUser> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _name.builder(),
+                    _email.builder(),
+                    _mobileNumber.builder(),
                     _password.builder(),
                     loading == false
                         ? TextButton(

@@ -183,13 +183,14 @@ class _DashboardState extends State<Dashboard> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         elevation: 10,
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => Control.leadScreen['value'] as Widget,
             ),
           );
+          refresh();
         },
         label: Row(
           children: [

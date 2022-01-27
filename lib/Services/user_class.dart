@@ -14,10 +14,16 @@ class User {
   bool? _isAdmin;
   // ignore: unused_field
   bool? _isBlock;
+  // ignore: unused_field
+  String? _number;
+  // ignore: unused_field
+  String? _email;
 
   User({
     String? nm,
     String? pwd,
+    String? num,
+    String? mail,
     bool? blk = false,
     bool? adm = false,
     int? ids = -1,
@@ -27,6 +33,8 @@ class User {
     _isAdmin = adm;
     _isBlock = blk;
     _id = ids;
+    _number = num;
+    _email = mail;
   }
 
   int getId() {
@@ -88,6 +96,8 @@ class User {
           adim: server['isadmin'] as bool,
           blok: server['isblock'] as bool,
           ids: server['id'],
+          numb: server['mobile'] as String,
+          mail: server['email'] as String,
         );
 
       case false:
@@ -97,6 +107,8 @@ class User {
           adim: server['isadmin'] as bool,
           blok: server['isblock'] as bool,
           ids: server['id'],
+          numb: server['mobile'] as String,
+          mail: server['email'] as String,
         );
 
       default:
@@ -106,6 +118,8 @@ class User {
           adm: server['isadmin'] as bool,
           blk: server['isblock'] as bool,
           ids: server['id'],
+          num: server['mobile'] as String,
+          mail: server['email'] as String,
         );
     }
   }
@@ -115,8 +129,8 @@ class User {
       dynamic res = await User.login(username: _name!, password: _password!);
       if (!res['value']) {
         dynamic result = await Query.execute(p1: '1', query: """
-        insert into usr_mast(usr_nm,pwd,isadmin,isblock)
-        values('$_name','$_password',0,0)
+        insert into usr_mast(usr_nm,pwd,isadmin,isblock,mobile,email)
+        values('$_name','$_password',0,0,'$_number','$_email')
         """);
         if (result['status'] == "success") {
           return {"msg": "User Created Successfully", "value": true};
