@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:walltex_app/Helpers/querie.dart';
+import 'package:walltex_app/Providers/control_provider.dart';
 import 'package:walltex_app/Services/loader_services.dart';
+import 'package:walltex_app/Services/user_class.dart';
 import 'package:walltex_app/Widgets/task_type_tile.dart';
 
 import 'new_task_type.dart';
@@ -20,9 +23,9 @@ class _AllTaskScreenState extends State<AllTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("**********************");
-    print(widget.leadId);
-    print("**********************");
+    final User _currUser =
+        Provider.of<ControlProvider>(context, listen: false).getUser();
+
     return Scaffold(
       appBar: AppBar(title: const Text("All Task")),
       body: FutureBuilder(
@@ -59,24 +62,26 @@ class _AllTaskScreenState extends State<AllTaskScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NewTaskType(
-                leadId: widget.leadId,
-                enable: true,
+      floatingActionButton: (_currUser.isAdmin() == true)
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NewTaskType(
+                      leadId: widget.leadId,
+                      enable: true,
+                    ),
+                  ),
+                );
+                refresh();
+              },
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [const Icon(Icons.add), const Text("Add Task")],
               ),
-            ),
-          );
-          refresh();
-        },
-        label: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [const Icon(Icons.add), const Text("Add Task")],
-        ),
-      ),
+            )
+          : const SizedBox(height: 0),
     );
   }
 }
