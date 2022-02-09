@@ -88,15 +88,15 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     count++;
   }
 
-  final Input _name = Input(label: "Name");
+  final Input _name = Input(label: "Name *");
   final Input _address = Input(label: "Address");
   final Input _place = Input(label: "Place");
-  final Input _mobile = Input.number(label: "Mobile Number without +91");
+  final Input _mobile = Input.number(label: "Mobile Number without +91 *");
   final Input _email = Input.email(label: "Email");
-  final MyDate _anniv = MyDate(label: "Anniv");
+  final MyDate _anniv = MyDate(label: "Anniv *");
   final Input _material = Input(label: "Material");
   final Input _remark = Input(label: "Remark");
-  final MyDate _dob = MyDate(label: "Select DOB");
+  final MyDate _dob = MyDate(label: "Select DOB *");
 
   bool check() {
     if (_dob.isEmpty()) {
@@ -106,13 +106,17 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
       showSnakeBar(context, "Select A Valid Anniversary Date");
       return false;
     } else if (_name.isEmpty() ||
-        _address.isEmpty() ||
-        _place.isEmpty() ||
         _mobile.isEmpty() ||
-        _email.isEmpty() ||
-        _selectedUser!.isEmpty() ||
-        _selectedReference!.isEmpty()) {
-      showSnakeBar(context, "Enter All Fields Properly");
+        _selectedUser!.isEmpty()) {
+      showSnakeBar(context, "Enter All Fields Marked With * Properly");
+      return false;
+    } else if (_prod1!.isEmpty() &&
+        _prod2!.isEmpty() &&
+        _prod3!.isEmpty() &&
+        _prod4!.isEmpty() &&
+        _prod5!.isEmpty() &&
+        _prod6!.isEmpty()) {
+      showSnakeBar(context, "Select Atleast One Product");
       return false;
     } else {
       return true;
@@ -174,11 +178,15 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     double? lon;
 
     // if user is not admin, then its own id will be saved into sman
-    if (!_curUser.isAdmin()) {
-      setState(() {
-        _selectedUser = _curUser;
-      });
-    }
+
+    // if (!_curUser.isAdmin()) {
+    //   setState(() {
+    //     _selectedUser = _curUser;
+    //   });
+    // }
+
+    //  now id will be saved as per the selected user
+
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
@@ -229,6 +237,8 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
     }
   }
 
+  late String _createdDate;
+
   getSet(int id, {bool noProduct = false}) async {
     dynamic res = await Lead.getLead(id);
     _name.setValue(res['Name']);
@@ -240,6 +250,8 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
 
     _anniv.setValue(res['anniv']);
     _dob.setValue(res['dob']);
+    _createdDate = res['leaddate'];
+    print(dateFormatFromDataBase(_createdDate));
 
 //  only at time of auto fillup with mobile number
     if (noProduct == false) {
@@ -375,7 +387,7 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                     widget.madeLead != null
                         ? Chip(
                             label: Text(
-                                "Date Created : ${dateFormat(_dob.value())}"),
+                                "Date Created : ${onlyDateFromValue(_createdDate)}"),
                           )
                         : const SizedBox(width: 0),
                     FocusScope(
@@ -397,20 +409,19 @@ class _LeadEntryScreenState extends State<LeadEntryScreen> {
                       },
                       label: "References",
                     ).build(),
-                    _currUser.isAdmin() == true
-                        ? Dropdown<User>(
-                            selected: _selectedUser,
-                            items: _users,
-                            fun: (val) {
-                              setState(() {
-                                _selectedUser = val;
-                              });
-                            },
-                            label: "Assigned To",
-                          ).build()
-                        : const SizedBox(
-                            height: 0,
-                          ),
+
+                    // Now it is open to all users
+                    // if (_currUser.isAdmin() == true)
+                    Dropdown<User>(
+                      selected: _selectedUser,
+                      items: _users,
+                      fun: (val) {
+                        setState(() {
+                          _selectedUser = val;
+                        });
+                      },
+                      label: "Assigned To *",
+                    ).build(),
                     _address.builder(),
                     _place.builder(),
                     _email.builder(),

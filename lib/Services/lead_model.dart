@@ -1,3 +1,4 @@
+import 'package:walltex_app/Helpers/format_date.dart';
 import 'package:walltex_app/Helpers/querie.dart';
 
 class Lead {
@@ -122,7 +123,7 @@ class Lead {
         remarks,leaddate,lat,long,ref,nextfollowuprem,ordergain,gaindetails,orderlost,
         lostdetails)
         values($sman,'$name','$address','$place','$mobile','$email','$dob','$anniv',
-        $prod1,$prod2,$prod3,$prod4,$prod5,$prod6,'$material','$remark','$leaddate',
+        $prod1,$prod2,$prod3,$prod4,$prod5,$prod6,'$material','$remark','${formateDate(DateTime.now())}',
         $lat,$log,$reffId,'$nextfollowuprem',$ordergain,'$gaindetails',$orderlost,'$lostdetails')
 
         """,

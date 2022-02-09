@@ -109,20 +109,22 @@ class FollowupMenuScreen extends StatelessWidget {
                     );
                   },
                 ),
-                if (currentUser.isAdmin() == true)
-                  SimpleTile(
-                    label: "Show Task",
-                    fun: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AllTaskScreen(
-                            leadId: data['leadid'],
-                          ),
+
+                // now it is open to all users
+                // if (currentUser.isAdmin() == true)
+                SimpleTile(
+                  label: "Show Task",
+                  fun: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AllTaskScreen(
+                          leadId: data['leadid'],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
